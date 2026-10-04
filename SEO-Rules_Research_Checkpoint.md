@@ -70,3 +70,62 @@ All found material is C (agencies). Practical consensus: consistent facts across
 4. Amazon Intellectual Property policy page (primary).
 5. Re-verification pass x5 and the final SEO-Rules.
 6. Product facts (material, shell type, dimensions, GTIN/exemption, exact AirPods fit) for the listings.
+
+---
+
+# Update 2 (2026-10-04): user decisions and Helium 10 MCP verification
+
+## 10. Decisions confirmed by the user
+| Topic | Decision |
+|---|---|
+| Brand | MOBILIUS. Brand counts toward the 75-character title limit |
+| Item Highlights | 125 characters including spaces |
+| Bullets | Up to 500 characters each. Use the available length. See open point A below |
+| Claims | No claims at all. Removed: antimicrobial. Also not used: shockproof, waterproof, drop-tested, MagSafe, scratch-proof, print-durability guarantees |
+| Product facts | TPU, soft-touch coating. Source: user |
+| Compatibility, Pro | One case fits AirPods Pro (1st generation) and AirPods Pro 2 at the same time. Both must be stated. No Pro 3 claim. Source: user and `Airpods pro_Pro2_406516.xlsx` |
+| Compatibility, AirPods 4 | `Airpods4_406517.xlsx` |
+| Data sources | Helium 10 MCP (Magnet, Cerebro) plus Cerebro xlsx (not yet in repo) |
+
+## 11. Feed fields that carry the confirmed facts (valid values from the user's template)
+- Material: `Thermoplastic Polyurethane` is a valid value. Use it. "Soft-touch coating" has no valid value, so it goes into bullets and description as plain text.
+- Compatible Headphone Models (Pro file): `Apple AirPods Pro` AND `Apple AirPods Pro (2nd generation)`. Do not add `Apple AirPods Pro (3rd generation)`.
+- Compatible Headphone Models (AirPods 4 file): `Apple AirPods (4th generation)`. The valid list also has a 5th generation. A competitor lists "AirPods 5 (2026)". Do not claim 5th generation without the user's confirmation.
+- Special Features valid values include `Wireless Charging Compatible`, `Scratch Resistant`, `Shockproof`, `Waterproof`, `Antimicrobial`. The "no claims" decision means these stay empty unless the user confirms a test. `Key Ring` and `Lanyard` are valid if the carabiner is confirmed in the package.
+- Shell Type valid values: Hard, Hybrid, Soft. Proposal: `Soft` (TPU). Needs user confirmation.
+
+## 12. Helium 10 MCP verification (2026-10-04, US)
+**Search volume: confirmed.** All 20 phrases from `AirPods_US_SEO.xlsx` re-checked with `analyze_keywords`. Volumes are within about 20% of the 26.09 snapshot, and all 30-day trends are negative (-7% to -39%), as the file states. Examples (file → now): airpods pro case 30631 → 32497; airpods pro 2 case 27152 → 28847; airpods 4 case 102844 → 86564; case for airpods 4 3136 → 3165.
+
+**Keyword Sales: NOT confirmed.** The file shows 837/week for "airpod pro case" and 1196 for "airpods 4 case". The MCP field `keyword_sales_weekly` returns 76 and 253 for the same phrases. The scale differs by a factor of 5 to 12, not constant. Different metric definition is likely, not proven. The file's threshold (Keyword Sales >= 100/week) cannot be reproduced with the current MCP numbers. Resolve with the Cerebro xlsx.
+
+**Organic rank: confirmed** for B0CMTLM78L (rank 1 on airpods pro 2 case and 40 more phrases, exact ASIN, `exclude_variations=true`).
+
+**Live competitor structure (observed, not a rule):**
+- B0CMTLM78L title: "Ljusmicker for AirPods Pro Case Cover with Cleaner Kit,Black" (60 characters). It ranks #1 organic for "airpods pro 2 case" although "Pro 2" is not in the title. Generation words ("2nd/1st Generation") sit in Item Highlight and bullet 1. Ranking also depends on sales, so this does not prove that highlights outrank titles.
+- B0DGXSP5VD title: "Ljusmicker for AirPods 5/4 Case (2026/2024) with Cleaner Kit,Black". Both competitors put compatibility in bullet 1 as "Accurately Match: Compatible with...". Both contain claims (shockproof, skin-friendly) that the user's no-claims rule excludes.
+
+**Pro 3 contamination:** "airpods pro 3 case" has 202,798 searches per month, more than any phrase in the file. Generic Pro phrases ("airpods pro case", "airpod pro case") mix Pro 1/2/3 demand. The product is not for Pro 3, so these phrases cannot be the main target. Use "pro 2", "2nd generation", "1st generation" phrases as the model-specific core.
+
+**Wrong-product trap:** "airpods 1/2 case" (476) and "airpod 1/2 case" (279) mean AirPods 1 and 2, not Pro 1 and Pro 2. Write "Pro 2nd/1st Generation" in full. Never "1/2".
+
+**Attribute phrases have no demand:** "airpods pro tpu case", "airpods pro 2 case tpu", "airpods 4 tpu case", "airpods 4 case soft", "airpods pro case with carabiner" and "airpods 4 case anc" returned 0 search volume. TPU and soft-touch are for the buyer and for AI shopping assistants, not for keyword targeting. Do not spend title characters on them.
+
+**Candidate phrases with volume (to use or test):** airpods pro 2nd generation case 2859; airpods pro 2 case cover 2210; airpod pro 2nd generation case 1839; air pods pro 2 case 1768; case airpods pro 2 1766; airpods 2 pro case 1246; airpods pro 1st generation case 663; airpods pro case 1st generation 306; airpods 4th generation case 663; airpods 4 cover 610; airpods 4 protective case 305; airpods keychain case 527 (only if keychain/carabiner is confirmed in the package); airpods 4 case keychain 406; airpods 4 case for women 467; airpods 4 case cute 3335; airpods pro case cute 1246.
+
+## 13. Existing drafts need rework
+`AirPods_US_Listing_Review.xlsx` ("Контроль длины") uses working limits: Title <= 100, bullets <= 500, description <= 2000, backend < 250 bytes. Title 100 violates the 75 limit. Backend < 250 bytes should be <= 249. Both must change. The same file also records wireless charging and carabiner as "from images, needs product test" and states that Photo 5 of the Pro series has front/back labels swapped.
+
+## 14. Illustrative title lengths (NOT approved text; the brand counts)
+- "MOBILIUS TPU Case for AirPods Pro 2nd/1st Generation, Black Desert Stamps" = 73 characters
+- "MOBILIUS TPU Case for AirPods 4 (4th Generation), Black Peony Print" = 67 characters
+So brand + material + product + compatibility + print name fits in 75, but only if print names stay short.
+
+## 15. Open points
+A. Bullets: "<= 500 each" and "use the maximum" gives up to 2,500 characters. Amazon staff recommends 1,000 total, and many sources say only about the first 1,000 bytes are indexed. Proposed rule: each bullet up to 500, with all priority keywords inside the first 1,000 bytes of the five bullets taken in order. Needs user confirmation.
+B. Wireless charging: the images say it is supported, the review file says it needs a product test. Under the no-claims decision it stays out until confirmed.
+C. Package contents (carabiner/keychain): needed for keychain phrases.
+D. Shell Type `Soft` vs `Hybrid`.
+E. AirPods 4: ANC vs standard case, and 5th generation fit.
+F. Cerebro xlsx (resolves the Keyword Sales mismatch).
+G. Still to read from Amazon primary sources: description limits, Intellectual Property policy page, category style guide.
