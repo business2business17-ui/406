@@ -4,6 +4,7 @@
 Rules come from SEO-Rules.md. Every limit below is tagged with its status there.
 Usage:
     python3 seo_check.py listing.json
+    python3 seo_check.py --batch listings.json   (adds Color/title uniqueness per parent)
     python3 seo_check.py --selftest
 listing.json = {"title": str, "highlight": str, "bullets": [str x5],
                 "description": str, "backend": str, "series": "pro" | "airpods4"}
@@ -179,12 +180,17 @@ def check(listing):
         if re.search(r"airpods\s*(1|2)\s*/\s*(2|1)", blob):
             errs.append("pro: '1/2' without 'Pro 2nd/1st Generation' means AirPods 1/2 (wrong product)")
     if series == "airpods4":
-        if not re.search(r"(airpods\s*4|4th)", t, re.I):
-            errs.append("airpods4: title must name AirPods 4")
-        if re.search(r"\b(anc|noise|5th|airpods 5|2026)\b", blob):
-            errs.append("airpods4: ANC / 5th generation not confirmed by user")
-    if "carabiner" not in blob:
-        warns.append("package: carabiner (confirmed by user) not mentioned")
+        if not re.search(r"airpods\s*5", t, re.I) or not re.search(r"airpods\s*4", t, re.I):
+            errs.append("airpods4: title must name both AirPods 5 and AirPods 4 (user: same case fits both)")
+        first = t + " " + h + " " + (bl[0] if bl else "")
+        if not (re.search(r"(airpods\s*4|4th)", first, re.I) and re.search(r"(airpods\s*5|5th)", first, re.I)):
+            errs.append("airpods4: AirPods 4 and AirPods 5 must both be named in title, highlight or bullet 1")
+        if re.search(r"\b(anc|noise cancel\w*)\b", blob):
+            errs.append("airpods4: ANC fit not confirmed by user")
+    if re.search(r"\b20(19|2\d)\b", blob):
+        errs.append("release years are not confirmed by user: remove year numbers")
+    if "carabiner" not in blob and "keychain" not in blob:
+        warns.append("package: carabiner keychain (confirmed by user) not mentioned")
     return errs, warns
 
 
@@ -204,7 +210,44 @@ EXAMPLE = {
 }
 
 
+def batch(path):
+    """Batch file: {"listings": [{"sku","parent","color", ...single listing fields...}]}.
+    Besides every single-listing check, Color and title must be unique inside one parent
+    (variation theme COLOR: duplicate Color values prevent the variation from being created)."""
+    data = json.load(open(path, encoding="utf-8"))["listings"]
+    failed = 0
+    by_parent = {}
+    for L in data:
+        errs, warns = check(L)
+        by_parent.setdefault(L.get("parent", ""), []).append(L)
+        for e in errs:
+            print(f"ERROR   [{L.get('sku')}] {e}")
+        for w in warns:
+            print(f"WARNING [{L.get('sku')}] {w}")
+        failed += bool(errs)
+    for parent, items in by_parent.items():
+        for field in ("color", "title"):
+            seen = {}
+            for L in items:
+                v = re.sub(r"\s+", " ", L.get(field, "")).strip().lower()
+                if not v:
+                    print(f"ERROR   [{L.get('sku')}] {field}: empty")
+                    failed += 1
+                elif v in seen:
+                    print(f"ERROR   [{L.get('sku')}] {field} duplicates [{seen[v]}] inside parent {parent}")
+                    failed += 1
+                else:
+                    seen[v] = L.get("sku")
+                if field == "color" and v and any(ord(c) > 127 for c in v):
+                    print(f"ERROR   [{L.get('sku')}] color: non-ASCII")
+                    failed += 1
+    print(f"{len(data)} listings, {failed} failing checks")
+    return 1 if failed else 0
+
+
 def main():
+    if len(sys.argv) > 2 and sys.argv[1] == "--batch":
+        return batch(sys.argv[2])
     if len(sys.argv) > 1 and sys.argv[1] == "--selftest":
         listing = EXAMPLE
     elif len(sys.argv) > 1:

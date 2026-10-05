@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 0.9 (draft for user review). Date 2026-10-05. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
+Version 0.95 (draft for user review). Date 2026-10-05. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -105,6 +105,9 @@ Brand is `MOBILIUS` [U]. Brand attribute is `MOBILIUS`. Every title starts with 
 ### 4.3 Bullets [U]
 Each bullet up to 500 characters. All priority keywords must sit inside the **first 1000 bytes of the five bullets read in order**. Bytes equal characters for ASCII text. Text after byte 1000 is for shoppers only and carries no priority keyword. Reason: many practitioner sources say only about the first 1000 bytes of bullets are indexed [C], and Amazon staff recommend 1,000 characters total [B]. No Amazon source confirms an indexing cutoff [OPEN]. [CHECKED] as a warning.
 
+### 4.3a Variations [U]
+One parent per series (Pro, AirPods 4). Variation theme `COLOR`. The `Color` value of every child must be **unique inside its parent**, otherwise Amazon does not create the variation (the theme attribute must be populated for every child [A] template). Color source: the print name from the PDF catalog [OPEN, catalog not yet in repo]. Checked on the current working names: 65 of 65 unique in each series file, case-insensitive, ASCII only, longest 38 characters. [CHECKED] by `seo_check.py --batch`. The same Color text may appear in both series (different parents), but not twice in one parent.
+
 ### 4.4 Text language
 EN US only. ASCII only. No Cyrillic and no accents in any field.
 
@@ -116,10 +119,10 @@ EN US only. ASCII only. No Cyrillic and no accents in any field.
 ### 5.1 Both series [U]
 - Material: TPU (thermoplastic polyurethane) with a soft-touch coating.
 - Average thickness: 2.5 mm.
-- Package: one case and one carabiner. Earbuds and charging case are not included.
+- Package: one case and one carabiner keychain. Earbuds and charging case are not included. "Keychain" is approved wording [U]; "carabiner" has no search demand (0), "keychain" has.
 - Construction: two parts, top and base (from images in `AirPods_US_Listing_Review.xlsx`). The fixing mechanism is unknown: never mention lock, glue or magnet.
 - Cutout for a charging cable is visible in the product images (Photo 4). Wireless charging is **not** claimed.
-- Each SKU is one print design. The design name comes from the `Color / Pattern` column.
+- Each SKU is one print design. The design name comes from the PDF catalog [OPEN, not yet in the repo]. Until then the working names in the `Color / Pattern` column are used; they are not factory names.
 
 Write "average 2.5 mm thickness" (never "approx.").
 
@@ -135,18 +138,21 @@ Write "average 2.5 mm thickness" (never "approx.").
 | Item Type Keyword | the single valid value for `headphone-cases` | [A] |
 | Material | `Thermoplastic Polyurethane` | [A] value, [U] fact |
 | Compatible Headphone Models, Pro series | `Apple AirPods Pro` and `Apple AirPods Pro (2nd generation)` | [A] values, [U] fact |
-| Compatible Headphone Models, AirPods 4 series | `Apple AirPods (4th generation)` | [A] value |
-| Shell Type | `Soft` proposed; `Hybrid` if the user disagrees | [OPEN] |
+| Compatible Headphone Models, AirPods 4 series | `Apple AirPods (4th generation)` and `Apple AirPods (5th generation)` | [A] values, [U] fact (same case dimensions) |
+| Shell Type | `Soft` | [U] |
 | Theme | one valid value per print (Floral, Animal, Landscape, Nature, Sport, Military, Space...) chosen from the design name | [A] list |
 | Color | design name from `Color / Pattern` (free text) | source file |
 | Number of Items | 1 | fact |
-| Special Features | leave empty unless a claim-free value applies. `Key Ring` and `Lanyard` do not describe a carabiner | [OPEN] |
+| Special Features | `Key Ring` is a valid value and now matches the approved "keychain" wording. Proposed, confirm. All claim values stay empty | [OPEN] |
 | Brand Name | MOBILIUS | [U] |
-| Country of Origin, GTIN or exemption, dimensions, weight, manufacturer | needed from the user | missing |
+| Country of Origin | `China` | [U] |
+| Product Id Type | `GTIN Exempt` | [U] (confirm the exemption is approved for MOBILIUS in Seller Central) |
+| Package dimensions, package weight, manufacturer | needed from the user | missing |
 
 ### 5.4 AirPods 4 series (`Airpods4_406517.xlsx`)
-- Name it "AirPods 4" or "AirPods (4th Generation)". Not "ANC", not "5th generation": not confirmed. [OPEN]
-- Fit for both the standard and the ANC case is not confirmed in the files ("confirm on the product"). [OPEN]
+- One case fits **AirPods 4 and AirPods 5**: the case dimensions are identical. [U] Name both generations. Never write years (release years are not stated in the user files).
+- Fit for the standard and the ANC version of the AirPods 4 case is not stated in the files. Do not mention ANC. [OPEN]
+- The demand is larger for 5 than for 4 (section 6.2). Keep "AirPods 5" in the title.
 
 ## 6. Keyword architecture
 Data: Helium 10 MCP `analyze_keywords`, US, 2026-10-04. Monthly search volume (SV). All phrases keep their natural word order where possible, but Amazon matches words, not strict phrases [C].
@@ -165,18 +171,24 @@ Data: Helium 10 MCP `analyze_keywords`, US, 2026-10-04. Monthly search volume (S
 | 3 | airpodpro case; air podspro case; airpod procase | 255; 387; 391 | backend |
 | avoid | airpods pro 3 case | 202,798 | do not use. Not compatible |
 | avoid | airpods 1/2 case | 476 | wrong product |
-| no demand | airpods pro tpu case, tpu / soft-touch phrases | 0 | use in bullets for shoppers, not for ranking |
+| 3 | airpods pro case with keychain; airpods case keychain; airpods pro case keychain; airpods pro 2 case keychain | 350; 540; 99; 37 | bullet 5 and highlights (words "keychain", "carabiner keychain") |
+| no demand | airpods pro tpu case, tpu / soft-touch phrases, carabiner phrases | 0 | use in bullets for shoppers, not for ranking |
 
-### 6.2 AirPods 4 series
+### 6.2 AirPods 4 series (covers AirPods 4 and AirPods 5)
+Helium 10 MCP, US, 2026-10-04. The 26.09 file has no AirPods 5 phrases; these were added by MCP check. [CHECK again with Cerebro xlsx]
 | Tier | Phrase | SV | Placement |
 |---|---|---|---|
+| 1 | airpods 5 case | 128,552 | title + bullet 1 |
 | 1 | airpods 4 case | 86,564 | title + bullet 1 |
-| 1 | airpod 4 case | 42,078 | spelling variant, cover in backend if not visible |
-| 2 | airpods 4 case cover; airpod case 4; airpods case 4; case airpods 4 | 7,735; 9,533; 5,948; 4,088 | bullet 1 |
-| 2 | case for airpods 4 | 3,165 | title uses "Case for AirPods 4" |
-| 2 | airpods 4th generation case | 663 | bullet 1 |
+| 1 | airpod 5 case | 52,972 | spelling variant, backend if not visible |
+| 1 | airpod 4 case | 42,078 | spelling variant, backend if not visible |
+| 2 | airpods 5 case cover | 16,172 | bullet 1 |
+| 2 | airpods 4 case cover; airpod case 4; airpods case 4; case airpods 4 | 7,735; 9,533; 5,948; 4,088 | bullet 1 or 2 |
+| 2 | case for airpods 5; case for airpods 4 | 4,739; 3,165 | title uses "Case for AirPods 5 and AirPods 4" |
+| 2 | airpods 4th generation case; airpods 5th generation case | 663; 559 | bullet 1 |
 | 3 | air pods4 case; air pod 4 case; air pods 4 case | 4,510; 4,088; 3,330 | backend |
-| keychain | airpods 4 case keychain | 406 | "carabiner" is confirmed, "keychain" is not. Do not use "keychain" unless the user confirms |
+| 3 | airpods case keychain; airpods 5 case keychain; airpods 4 case with keychain | 540; 467; 250 | bullet 5 and highlights |
+| avoid | airpods 4 and 5 case | 0 | no demand |
 
 ### 6.3 Observed practice (not rules)
 Both leading competitors (`B0CMTLM78L`, `B0DGXSP5VD`) use a short title (about 60 characters) and put the compatibility list into bullet 1 and the highlights. The Pro 2 leader ranks first for "airpods pro 2 case" without "Pro 2" in its title. Ranking also depends on sales, so this is context only.
@@ -200,21 +212,22 @@ Both leading competitors (`B0CMTLM78L`, `B0DGXSP5VD`) use a short title (about 6
 ## 8. Open points (the AI must not guess these)
 | # | Open point | Needed from |
 |---|---|---|
-| 1 | Shell Type `Soft` or `Hybrid` | user |
-| 2 | AirPods 4: standard and ANC case fit, 5th generation fit | user |
-| 3 | Country of origin, GTIN or exemption, package size and weight, manufacturer | user |
-| 4 | "Keychain" word (carabiner confirmed, keychain not) | user |
-| 5 | Cerebro xlsx to resolve the Keyword Sales mismatch | user |
+| 1 | PDF catalog with print names (source of the unique `Color` values) | user: add to repo |
+| 2 | Cerebro xlsx (basis for keywords; also resolves the Keyword Sales mismatch) | user: add to repo |
+| 3 | AirPods 4: standard and ANC case fit | user |
+| 4 | Package dimensions, package weight, manufacturer; confirm the GTIN exemption is approved | user |
+| 5 | Special Features `Key Ring`: add or leave empty | user |
 | 6 | Whether Item Highlights carry the same search weight as the title | Amazon has not said |
 | 7 | Whether the 1000-byte bullet indexing limit exists | no Amazon source |
 | 8 | Description limit 2000 | no Amazon staff source |
-| 9 | Print names: working names from images, not factory names (`AirPods_US_Listing_Review.xlsx`) | user |
-| 10 | Photo 5 of Pro series has front and back labels swapped (sample q212) | user |
-| 11 | Variation structure (one parent per series, theme `COLOR` with the design name) | user, not checked with Amazon |
+| 9 | Photo 5 of Pro series has front and back labels swapped (sample q212) | user |
+
+Closed since v0.9: Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt; "keychain" wording; variation theme `COLOR` with unique values.
 
 ## 9. Verification log
 Passes completed so far:
 - Pass 1 (source read): title 75 and 125, backend 249 bytes, trademark wording, HTML in description. Primary pages fetched.
 - Pass 2 (data check): 20 keywords from `AirPods_US_SEO.xlsx` against Helium 10 MCP.
 - Pass 3 (tooling): `seo_check.py` tested on one valid and one deliberately invalid listing.
+- Pass 4 (series files): Color uniqueness, SKU uniqueness, ASCII check on both series files (65 rows each). 5th generation and keychain demand checked with Helium 10 MCP on 2026-10-05.
 Still to do before this version is final: re-check each [A] and [B] source once more at the end, cross-check every number against the feed and the series files, resolve the open points, run 130 SKU texts through `seo_check.py`.
