@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 0.99 (draft for user review). Date 2026-10-06. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
+Version 1.0 (final after five verification passes; open items listed in section 8). Date 2026-10-06. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -80,7 +80,7 @@ From the Amazon text kept in the requirements file [A*] and template Data Defini
 - The 2000-character limit is widely cited but no Amazon staff statement was found. [OPEN] Work limit: 2000.
 
 ### 3.5 Backend terms
-- Limit **249 bytes**, not characters. [B] https://sellercentral.amazon.com/seller-forums/discussions/t/8e1ad5d2-5d5f-4086-bda3-735505e23bb1 Keep to 240 bytes or fewer.
+- Limit **249 bytes**, not characters. [B] Verified again: the same thread shows that a feed (inventory file) upload is rejected with "Please reduce your generic keyword length to less than '250' bytes"; manual entry may accept more in some cases, but this project uploads a feed, so 249 is the working limit. https://sellercentral.amazon.com/seller-forums/discussions/t/8e1ad5d2-5d5f-4086-bda3-735505e23bb1 Keep to 240 bytes or fewer.
 - Template: terms relevant to searches, no repetition, no competitor brand names or ASINs. [A]
 - Practitioner advice [C]: lowercase, space-separated, no punctuation, no words already in title or bullets (they are already indexed), no plurals of existing words.
 - Exceeding the limit may make Amazon ignore the whole field [C]. Never exceed.
@@ -129,7 +129,7 @@ Write "average 2.5 mm thickness" (never "approx.").
 Case size and weight [U], confirmed 2026-10-06 for **both series**: length 64 mm, width 48 mm, height 25 mm, weight 30 g. Rules:
 - Feed (product, not package): `Item Length` 64, `Item Width` 48, `Item Height` 25 with unit `Millimeters`; `Item Weight` 30 with unit `Grams`. Both units are valid values in the template, no conversion needed. [A] template
 - Package fields [U]: `Item Package Length` 74, `Item Package Width` 58, `Item Package Height` 35, unit `Millimeters` (case size plus 5 mm on each side, so +10 mm per dimension; reading confirmed by the user, "да такой вариант"). `Package Weight` 40, unit `Grams`, carabiner included. If the user meant +5 mm per dimension (69 x 53 x 30 mm) the three numbers change; nothing else does.
-- Text: write "length 64 mm, width 48 mm, height 25 mm" with a space between number and unit. Never write "lightweight" (a claim). The weight may be stated as "30 g".
+- Text [U]: **size and weight numbers go only into the feed fields, never into title, highlights, bullets, description or backend terms.** Reason: the AirPods 4 case does not have a measured size of its own; the user sets the average size 64 x 48 x 25 mm for it, and ships the orders MFN (merchant-fulfilled). Only the measured thickness ("average 2.5 mm thickness") may be written in text. [CHECKED] Never write "lightweight" (a claim).
 
 Source descriptions [U, done 2026-10-06]: the three claim phrases were removed from all 130 `Amazon Description` cells in both series files: "precise cut-outs and full access to the charging port" (second sentence now ends after "carabiner clip") and the sentence "Slim, lightweight protection against everyday scratches and bumps" (deleted). Only those cells changed. The compatibility sentence ("Compatible with AirPods Pro / Pro 2", "Compatible with AirPods 4") was left as it was and is **not** final: listing text must use the wording of section 5.2 and 5.4. The files are a source of print facts only; do not copy their sentences into a listing.
 
@@ -160,7 +160,7 @@ Photo 5, Pro series [U, done 2026-10-06]: in all 65 source images the captions w
 | Brand Name | MOBILIUS | [U] |
 | Country of Origin | `China` | [U] |
 | Product Id Type | `GTIN Exempt` | [U] (exemption approved for MOBILIUS in Seller Central, confirmed by the user) |
-| Item Length / Width / Height / Weight | 64 / 48 / 25 `Millimeters`, 30 `Grams` (both series) | [U] |
+| Item Length / Width / Height / Weight | 64 / 48 / 25 `Millimeters`, 30 `Grams` (both series; average size for AirPods 4) | [U] |
 | Manufacturer | `MOBILIUS` | [U] |
 | Item Package Length / Width / Height | 74 / 58 / 35 `Millimeters` | [U] |
 | Package Weight | 40 `Grams` (carabiner included) | [U] |
@@ -191,7 +191,7 @@ Data: Helium 10 MCP `analyze_keywords`, US, 2026-10-04. Monthly search volume (S
 | no demand | airpods pro tpu case, tpu / soft-touch phrases, carabiner phrases | 0 | use in bullets for shoppers, not for ranking |
 
 ### 6.2 AirPods 4 series (covers AirPods 4 and AirPods 5)
-Helium 10 MCP, US, 2026-10-04. The 26.09 file has no AirPods 5 phrases; these were added by MCP check. [CHECK again with Cerebro xlsx]
+Helium 10 MCP, US, 2026-10-04. The 26.09 file has no AirPods 5 phrases; these were added by MCP check and re-verified on 2026-10-06 (pass 5).
 | Tier | Phrase | SV | Placement |
 |---|---|---|---|
 | 1 | airpods 5 case | 128,552 | title + bullet 1 |
@@ -235,23 +235,31 @@ Print names (without the `Black / ` prefix) are 14 to 30 characters, median 22. 
 | AirPods 4 | `MOBILIUS Case for AirPods 5 and AirPods 4, ` (43) | 32 | 65 of 65 |
 Recommended: drop "TPU" from the title (it has no search demand and lives in highlights and bullets), keep "Generation" written in full (matches the searched phrases), and write the print name in the title as a **short name**: the full `Color` name when it fits, otherwise a shortened but still unique form. Pro: 10 names need shortening. Short names stay unique inside the parent. The full name goes to `Color`. [Recommendation C, based on the computation above]
 
-## 8. Open points (the AI must not guess these)
-| # | Open point | Needed from |
+## 8. Open points and actions
+Facts the AI may not assume (nothing blocks writing the texts):
+| # | Open point | Owner |
 |---|---|---|
-| 1 | AirPods 4 size: the user confirmed 64 x 48 x 25 mm for both series, but in the Photo 5 pictures the AirPods 4 case is almost square while the Pro case is clearly elongated (64 : 48 = 1.33). Please measure the AirPods 4 cover once more before the size goes into the feed and text | user |
-| 2 | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru`; the infographic text "DESIGNED FOR A CLOSE FIT" is a fit claim | user |
-| 3 | Whether Item Highlights carry the same search weight as the title | Amazon has not said |
-| 4 | Whether the 1000-byte bullet indexing limit exists | no Amazon source |
-| 5 | Description limit 2000 | no Amazon staff source |
-| 6 | Keyword Sales mismatch between the SEO file and the MCP field | not blocking: Keyword Sales is not used for new phrases |
+| 1 | Whether Item Highlights carry the same search weight as the title | Amazon has not said |
+| 2 | Whether an indexing cutoff at 1000 bytes of bullets exists. The project rule (section 4.3) works either way | no Amazon source |
+| 3 | Description limit 2000 characters | no Amazon staff source |
+| 4 | Keyword Sales mismatch between the SEO file and the MCP field. Not used for new phrases | not blocking |
 
-Closed: package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; q230 described only by colors and shapes; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; variation theme `COLOR` with unique values; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
+Actions for the user:
+| # | Action |
+|---|---|
+| A | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru` under the same names |
+| B | Rights decision on the print of q230 (the listing text is already neutral) |
+| C | After the first sales, replace the estimated demand with the account's own Search Query Performance and Search Term Reports |
 
-## 9. Verification log
-Passes completed so far:
-- Pass 1 (source read): title 75 and 125, backend 249 bytes, trademark wording, HTML in description. Primary pages fetched.
-- Pass 2 (data check): 20 keywords from `AirPods_US_SEO.xlsx` against Helium 10 MCP.
-- Pass 3 (tooling): `seo_check.py` tested on one valid and one deliberately invalid listing.
-- Pass 4 (series files): Color uniqueness, SKU uniqueness, ASCII check on both series files (65 rows each). 5th generation and keychain demand checked with Helium 10 MCP on 2026-10-05.
-- Pass 4b (PDF catalog): 4 pages, 65 SKU thumbnails viewed. The legible slogans match the working names (examples: q218 pear print, q222 "Orange Pop", q239 "No Risk No Story", q251 "Study Break"). This is a visual check, not a pixel-by-pixel comparison of every SKU.
-Still to do before this version is final: re-check each [A] and [B] source once more at the end, cross-check every number against the feed and the series files, resolve the open points, run 130 SKU texts through `seo_check.py`.
+Closed: AirPods 4 uses the average size, shipped MFN, size numbers only in feed fields; the infographic text "DESIGNED FOR A CLOSE FIT" accepted by the user; q246 lettering handled as "lettering"; package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; q230 described only by colors and shapes; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; variation theme `COLOR` with unique values; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
+
+## 9. Verification log (five passes)
+| Pass | What was checked | Result |
+|---|---|---|
+| 1 | Primary Amazon sources read: title 75 and highlights 125 (announcement of 2026-06-10), staff answers, backend 249 bytes, trademark wording, HTML in description, feed template | done |
+| 2 | 20 keywords of `AirPods_US_SEO.xlsx` against Helium 10 MCP | volumes within about 20%, trends all negative; Keyword Sales differs (open point 4) |
+| 3 | `seo_check.py` tested on a valid and on invalid listings, including q230 words and batch uniqueness of Color and title | works |
+| 4 | Series files and PDF catalog: Color unique (65 of 65 per series after the q230 change), ASCII, 65 thumbnails viewed, descriptions cleaned, Photo 5 corrected for 65 SKUs, feed fields and valid values read from the template | done |
+| 5 (final) | Re-fetched the five Amazon threads and re-quoted them (dates, 75 / 125, 200 split into two fields, 249 bytes and the feed error text, compatibility title formula and logo rule). Re-ran Helium 10 `analyze_keywords` for all 35 phrases used in sections 6.1 and 6.2: every volume equals the number in the tables | done |
+
+Limits of the verification: the Amazon help pages are behind the Seller Central login and were not readable; the statements marked [A*] come from the Amazon text kept in `Amazon_Product_Title_and_Bullet_Point_Requirements.md`. The Amazon staff posts on compatibility wording are about six years old. Helium 10 numbers are estimates. Everything not confirmed is labeled [OPEN] or [C] in the text above.

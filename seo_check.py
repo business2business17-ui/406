@@ -174,6 +174,10 @@ def check(listing):
         if c in blob:
             errs.append(f"claim/forbidden term '{c.strip()}' found (no-claims policy)")
 
+    # ---- size and weight only in feed fields (user decision)
+    if re.search(r"\b(64|48|25|74|58|35)\s*mm\b|\b(30|40)\s*(g|grams?)\b", blob):
+        errs.append("size or weight numbers must stay in feed fields, not in text (AirPods 4 uses an average size)")
+
     # ---- print-specific rules
     if str(listing.get("sku", "")).endswith("q230"):
         for w in Q230_FORBIDDEN:
