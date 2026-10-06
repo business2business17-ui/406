@@ -34,7 +34,10 @@ CLAIMS = ["antimicrobial", "anti-microbial", "antibacterial", "anti-bacterial", 
           "magsafe", "wireless charging", "qi ", "eco-friendly", "environmentally friendly",
           "premium", "best", "perfect", "ultimate", "durable", "unbreakable", "indestructible",
           "full protection", "360", "guarantee", "refund", "warranty", "skin-friendly",
-          "bamboo", "soy", "pro 3", "3rd generation", "airpods pro 3"]
+          "bamboo", "soy", "pro 3", "3rd generation", "airpods pro 3",
+          "lightweight", "slim", "scratches", "bumps", "full access", "precise cut"]
+# print q230 looks like a known animated character: describe it only by colors and shapes (user decision)
+Q230_FORBIDDEN = ["scientist", "potion", "lab coat", "laboratory", "rick", "morty", "mad ", "goggles"]
 ABBREV = ["qty", "pkg", "w/", "approx.", "approx ", "pcs", "w/o"]
 PLACEHOLDERS = ["n/a", "tbd", "not applicable", "copy pending", "to be decided"]
 ASIN_RE = re.compile(r"\bB0[A-Z0-9]{8}\b")
@@ -170,6 +173,12 @@ def check(listing):
     for c in CLAIMS:
         if c in blob:
             errs.append(f"claim/forbidden term '{c.strip()}' found (no-claims policy)")
+
+    # ---- print-specific rules
+    if str(listing.get("sku", "")).endswith("q230"):
+        for w in Q230_FORBIDDEN:
+            if w in blob:
+                errs.append(f"q230: '{w.strip()}' not allowed; describe the print only by colors and shapes")
 
     # ---- series-specific
     if series == "pro":
