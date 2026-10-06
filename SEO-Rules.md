@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 0.98 (draft for user review). Date 2026-10-06. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
+Version 0.99 (draft for user review). Date 2026-10-06. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -128,12 +128,16 @@ Write "average 2.5 mm thickness" (never "approx.").
 
 Case size and weight [U], confirmed 2026-10-06 for **both series**: length 64 mm, width 48 mm, height 25 mm, weight 30 g. Rules:
 - Feed (product, not package): `Item Length` 64, `Item Width` 48, `Item Height` 25 with unit `Millimeters`; `Item Weight` 30 with unit `Grams`. Both units are valid values in the template, no conversion needed. [A] template
-- Package fields (`Item Package Length/Width/Height`, `Package Weight`, conditionally required) describe the packed product. The user's rule: package size = case size plus 5 mm "на каждую сторону". Two readings: (a) +5 mm per dimension gives 69 x 53 x 30 mm; (b) 5 mm on each of two opposite sides, +10 mm per dimension, gives 74 x 58 x 35 mm. **Which one is meant is [OPEN]. Package weight is missing [OPEN]** (30 g is the case; it is not stated whether the carabiner is included).
+- Package fields [U]: `Item Package Length` 74, `Item Package Width` 58, `Item Package Height` 35, unit `Millimeters` (case size plus 5 mm on each side, so +10 mm per dimension; reading confirmed by the user, "да такой вариант"). `Package Weight` 40, unit `Grams`, carabiner included. If the user meant +5 mm per dimension (69 x 53 x 30 mm) the three numbers change; nothing else does.
 - Text: write "length 64 mm, width 48 mm, height 25 mm" with a space between number and unit. Never write "lightweight" (a claim). The weight may be stated as "30 g".
 
-Source descriptions: all 130 `Amazon Description` texts in the series files contain claim-like phrases ("Slim, lightweight protection against everyday scratches and bumps", "full access to the charging port", "precise cut-outs"). Use those files **only for the print facts** (subject, colors, shapes). Never copy their sentences. The Pro file says "Compatible with AirPods Pro / Pro 2", which also needs rewriting to "AirPods Pro 2nd generation and AirPods Pro 1st generation".
+Source descriptions [U, done 2026-10-06]: the three claim phrases were removed from all 130 `Amazon Description` cells in both series files: "precise cut-outs and full access to the charging port" (second sentence now ends after "carabiner clip") and the sentence "Slim, lightweight protection against everyday scratches and bumps" (deleted). Only those cells changed. The compatibility sentence ("Compatible with AirPods Pro / Pro 2", "Compatible with AirPods 4") was left as it was and is **not** final: listing text must use the wording of section 5.2 and 5.4. The files are a source of print facts only; do not copy their sentences into a listing.
 
-Print override q230 [U]: the print looks like a known animated character (verified by looking at the catalog thumbnail; not a legal opinion). Describe it only by colors and shapes. Do not write "scientist", "potion", "lab", "goggles", or any character name. [CHECKED] Working name for `Color`: `Black / Spiky Hair Figure Green Flask` (short name for the title: `Spiky Hair Green Flask`). Neutral description: a smiling figure with spiky white and teal hair, a white coat and purple gloves, holding a green flask in one hand and a teal tool in the other; white, green, purple and teal on black. The source text ("goggles", "test tube") also does not match the image (a head mirror and a tool are visible). Rewording the listing text does not change the design on the product itself; the rights check on the print remains the user's decision.
+Print q230 [U, done 2026-10-06]: the print looks like a known animated character (visual impression from the catalog thumbnail, not a legal opinion). It is now described only by colors and shapes in both series files. `Color` = `Black / Spiky Hair Figure Green Flask` (short title name `Spiky Hair Green Flask`). Image Description and Amazon Description were rewritten to match the image: a grinning figure with spiky white and teal hair, a white outfit with green buttons, purple gloves, a bubbling green flask in one hand and a teal tool in the other. The old text ("scientist", "goggles", "test tube", "potion") did not match the image and is removed. The validator blocks those words for q230 [CHECKED]. Rewording the text does not change the design printed on the product; the rights decision on the design stays with the user.
+
+Lettering printed on a design that contains a claim word (q246 "Perfect Fit") must not be quoted in listing text; describe it as "lettering". [CHECKED: the claim list flags "perfect"]
+
+Photo 5, Pro series [U, done 2026-10-06]: in all 65 source images the captions were swapped (the view with the print was captioned "back", the view with the pairing button "front"). Corrected copies are in `fixed_images/pro_photo5/<SKU>_5.jpg` (same file names, 2000 x 2000). Only the two captions changed; every other pixel is the same (JPEG noise only). Script: `fix_photo5_labels.py`. The images on `content.uvmaster.ru` are not replaced: upload the corrected files there under the same names. Photo 5 of the AirPods 4 series (sample q212) has correct captions. The infographic text "DESIGNED FOR A CLOSE FIT" is a fit claim; it was not changed.
 
 ### 5.2 Pro series (`Airpods pro_Pro2_406516.xlsx`)
 - One case fits **AirPods Pro (1st generation) and AirPods Pro 2** at the same time. Both must be named. [U]
@@ -158,8 +162,8 @@ Print override q230 [U]: the print looks like a known animated character (verifi
 | Product Id Type | `GTIN Exempt` | [U] (exemption approved for MOBILIUS in Seller Central, confirmed by the user) |
 | Item Length / Width / Height / Weight | 64 / 48 / 25 `Millimeters`, 30 `Grams` (both series) | [U] |
 | Manufacturer | `MOBILIUS` | [U] |
-| Package dimensions | case size plus 5 mm rule, reading to confirm (see 5.1) | [OPEN] |
-| Package weight | missing | [OPEN] |
+| Item Package Length / Width / Height | 74 / 58 / 35 `Millimeters` | [U] |
+| Package Weight | 40 `Grams` (carabiner included) | [U] |
 
 ### 5.4 AirPods 4 series (`Airpods4_406517.xlsx`)
 - One case fits **AirPods 4 and AirPods 5**: the case dimensions are identical. [U] Name both generations. Never write years (release years are not stated in the user files).
@@ -234,15 +238,14 @@ Recommended: drop "TPU" from the title (it has no search demand and lives in hig
 ## 8. Open points (the AI must not guess these)
 | # | Open point | Needed from |
 |---|---|---|
-| 1 | Package size: reading (a) 69 x 53 x 30 mm or (b) 74 x 58 x 35 mm | user |
-| 2 | Package weight, and whether the 30 g case weight includes the carabiner | user |
-| 3 | Photo 5 of the Pro series: front and back captions are swapped (explained in the chat, sample q212) | user: fix the image |
-| 4 | Whether Item Highlights carry the same search weight as the title | Amazon has not said |
-| 5 | Whether the 1000-byte bullet indexing limit exists | no Amazon source |
-| 6 | Description limit 2000 | no Amazon staff source |
-| 7 | Keyword Sales mismatch between the SEO file and the MCP field | not blocking: Keyword Sales is not used for new phrases |
+| 1 | AirPods 4 size: the user confirmed 64 x 48 x 25 mm for both series, but in the Photo 5 pictures the AirPods 4 case is almost square while the Pro case is clearly elongated (64 : 48 = 1.33). Please measure the AirPods 4 cover once more before the size goes into the feed and text | user |
+| 2 | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru`; the infographic text "DESIGNED FOR A CLOSE FIT" is a fit claim | user |
+| 3 | Whether Item Highlights carry the same search weight as the title | Amazon has not said |
+| 4 | Whether the 1000-byte bullet indexing limit exists | no Amazon source |
+| 5 | Description limit 2000 | no Amazon staff source |
+| 6 | Keyword Sales mismatch between the SEO file and the MCP field | not blocking: Keyword Sales is not used for new phrases |
 
-Closed: case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; q230 described only by colors and shapes; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; variation theme `COLOR` with unique values; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
+Closed: package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; q230 described only by colors and shapes; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; variation theme `COLOR` with unique values; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
 
 ## 9. Verification log
 Passes completed so far:
