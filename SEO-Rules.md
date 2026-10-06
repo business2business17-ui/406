@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 0.96 (draft for user review). Date 2026-10-05. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
+Version 0.97 (draft for user review). Date 2026-10-06. Scope: Amazon US only, two series: **Pro** (`Airpods pro_Pro2_406516.xlsx`, 65 SKUs) and **AirPods 4** (`Airpods4_406517.xlsx`, 65 SKUs). Product type in the feed: `PORTABLE_ELECTRONIC_DEVICE_COVER`, browse node `headphone-cases`.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -126,6 +126,11 @@ EN US only. ASCII only. No Cyrillic and no accents in any field.
 
 Write "average 2.5 mm thickness" (never "approx.").
 
+Case size and weight, as given by the user on 2026-10-06: "64 mm, width 48 mm, height 25 mm; 30 g". Reading used here: length 64 mm, width 48 mm, height 25 mm, weight 30 g. **The user's message labels only width and height, so this reading and the series it applies to must be confirmed before the numbers go into any text or feed field [OPEN].** Rules once confirmed:
+- Feed (product, not package): `Item Length` 64, `Item Width` 48, `Item Height` 25 with unit `Millimeters`; `Item Weight` 30 with unit `Grams`. Both units are valid values in the template, no conversion needed. [A] template
+- Package fields (`Item Package Length/Width/Height`, `Package Weight`, conditionally required) describe the packed product and are still missing.
+- Text: write "length 64 mm, width 48 mm, height 25 mm" with a space between number and unit. Never write "lightweight" (a claim). The weight may be stated as "30 g".
+
 ### 5.2 Pro series (`Airpods pro_Pro2_406516.xlsx`)
 - One case fits **AirPods Pro (1st generation) and AirPods Pro 2** at the same time. Both must be named. [U]
 - Never name or imply Pro 3. Never write "1/2" alone: "AirPods 1/2" is another product with its own demand.
@@ -147,7 +152,8 @@ Write "average 2.5 mm thickness" (never "approx.").
 | Brand Name | MOBILIUS | [U] |
 | Country of Origin | `China` | [U] |
 | Product Id Type | `GTIN Exempt` | [U] (exemption approved for MOBILIUS in Seller Central, confirmed by the user) |
-| Package dimensions, package weight, manufacturer | the user will provide the dimensions ("ожидаю размерность") | pending |
+| Item Length / Width / Height / Weight | 64 / 48 / 25 mm and 30 g, axis labels and series to confirm | [U], [OPEN] |
+| Package dimensions, package weight, manufacturer | still missing (the 2026-10-06 numbers describe the case itself) | pending |
 
 ### 5.4 AirPods 4 series (`Airpods4_406517.xlsx`)
 - One case fits **AirPods 4 and AirPods 5**: the case dimensions are identical. [U] Name both generations. Never write years (release years are not stated in the user files).
@@ -222,7 +228,8 @@ Recommended: drop "TPU" from the title (it has no search demand and lives in hig
 ## 8. Open points (the AI must not guess these)
 | # | Open point | Needed from |
 |---|---|---|
-| 1 | Package dimensions, package weight, manufacturer | user (announced) |
+| 1a | Confirm 64 mm is the length, and whether 64 x 48 x 25 mm and 30 g apply to both series (Pro and AirPods 4/5) | user |
+| 1b | Package dimensions, package weight (packed product), manufacturer | user |
 | 2 | Special Features `Key Ring`: add or leave empty | user |
 | 3 | Rights check for print q230 ("Cartoon Scientist With Potions"): it looks like a known animated character. Not verified, only visual impression | user |
 | 4 | Whether Item Highlights carry the same search weight as the title | Amazon has not said |
