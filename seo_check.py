@@ -75,7 +75,7 @@ def check(listing):
         errs.append(f"title: forbidden characters {bad}")
     if any(ord(c) > 127 for c in t + h + d + b + "".join(bl)):
         errs.append("non-ASCII character found (no emojis, ®, ™, ©, accents; template: no high ASCII)")
-    words = [w.lower() for w in re.findall(r"[A-Za-z0-9']+", t)]
+    words = [w.lower() for w in re.findall(r"\d+\.\d+|[A-Za-z0-9']+", t)]
     for w, n in Counter(words).items():
         if n > 2 and w not in STOPWORDS:
             errs.append(f"title: word '{w}' used {n} times (max 2)")
@@ -92,7 +92,7 @@ def check(listing):
     if h.endswith("."):
         warns.append("highlight: ends with a period (use phrases, not a sentence)")
     tw = set(words) - STOPWORDS
-    hw = [w.lower() for w in re.findall(r"[A-Za-z0-9']+", h)]
+    hw = [w.lower() for w in re.findall(r"\d+\.\d+|[A-Za-z0-9']+", h)]
     rep = sorted({w for w in hw if w in tw and w not in {"airpods", "pro", "case", "generation"}})
     if rep:
         warns.append(f"highlight: repeats title words {rep} (template: do not repeat title info)")

@@ -1,0 +1,62 @@
+{
+  "pro": {
+    "parent_sku": "406516U-PARENT",
+    "compatibility": [
+      "Apple AirPods Pro",
+      "Apple AirPods Pro (2nd generation)"
+    ],
+    "facts": {
+      "brand": "MOBILIUS",
+      "manufacturer": "MOBILIUS",
+      "material": "Thermoplastic Polyurethane",
+      "coating": "soft-touch coating",
+      "shell_type": "Soft",
+      "average_thickness_mm": 2.5,
+      "country_of_origin": "China",
+      "item_length_mm": 64,
+      "item_width_mm": 48,
+      "item_height_mm": 25,
+      "item_weight_g": 30,
+      "package_length_mm": 74,
+      "package_width_mm": 58,
+      "package_height_mm": 35,
+      "package_weight_g": 40,
+      "package_contents": "one case and one carabiner keychain",
+      "construction": "two parts, top and base",
+      "number_of_items": 1,
+      "fulfillment": "MFN (merchant-fulfilled)"
+    },
+    "variation_theme": "COLOR",
+    "children": 65
+  },
+  "airpods4": {
+    "parent_sku": "406517-PARENT",
+    "compatibility": [
+      "Apple AirPods (4th generation)",
+      "Apple AirPods (5th generation)"
+    ],
+    "facts": {
+      "brand": "MOBILIUS",
+      "manufacturer": "MOBILIUS",
+      "material": "Thermoplastic Polyurethane",
+      "coating": "soft-touch coating",
+      "shell_type": "Soft",
+      "average_thickness_mm": 2.5,
+      "country_of_origin": "China",
+      "item_length_mm": 64,
+      "item_width_mm": 48,
+      "item_height_mm": 25,
+      "item_weight_g": 30,
+      "package_length_mm": 74,
+      "package_width_mm": 58,
+      "package_height_mm": 35,
+      "package_weight_g": 40,
+      "package_contents": "one case and one carabiner keychain",
+      "construction": "two parts, top and base",
+      "number_of_items": 1,
+      "fulfillment": "MFN (merchant-fulfilled)"
+    },
+    "variation_theme": "COLOR",
+    "children": 65
+  }
+}
