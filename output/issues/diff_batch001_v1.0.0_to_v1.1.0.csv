@@ -1,0 +1,15 @@
+field,old,new,records_changed
+catalog.dangerous_goods_regulations,"[null, ""DATA_REQUIRED""]","[""Not Applicable"", ""VALID""]",130
+catalog.list_price,"[null, ""DATA_REQUIRED""]","[0, ""WARNING""]",130
+catalog.quantity,"[null, ""DATA_REQUIRED""]","[1, ""VALID""]",130
+catalog.sale_end_date,null,"[null, ""DATA_REQUIRED""]",130
+catalog.sale_price_usd,null,"[22.99, ""VALID""]",130
+catalog.sale_start_date,null,"[null, ""DATA_REQUIRED""]",130
+catalog.shipping_template,"[null, ""DATA_REQUIRED""]","[""Migrated Template"", ""VALID""]",130
+catalog.standard_price_or_sale_price,"[null, ""DATA_REQUIRED""]",null,130
+catalog.your_price_usd_standard_price,null,"[null, ""DATA_REQUIRED""]",130
+pricing.input_field,null,"""sale_price""",130
+pricing.input_value,null,22.99,130
+pricing.list_price,null,0,130
+pricing.sale_price,null,22.99,130
+variation.status,"""VARIATION_READY""","""NOT_USED""",130

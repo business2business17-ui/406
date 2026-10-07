@@ -1,6 +1,6 @@
 {
   "pro": {
-    "parent_sku": "406516U-PARENT",
+    "variation": "NOT_USED",
     "compatibility": [
       "Apple AirPods Pro",
       "Apple AirPods Pro (2nd generation)"
@@ -26,11 +26,36 @@
       "number_of_items": 1,
       "fulfillment": "MFN (merchant-fulfilled)"
     },
-    "variation_theme": "COLOR",
+    "pricing": {
+      "input_field": "sale_price",
+      "input_value": 22.99,
+      "currency": "USD",
+      "sale_price": 22.99,
+      "standard_price": null,
+      "list_price": 0,
+      "map_price": null,
+      "minimum_seller_allowed_price": null,
+      "maximum_seller_allowed_price": null,
+      "business_price": null,
+      "sale_start_date": null,
+      "sale_end_date": null,
+      "pricing_policy_version": null,
+      "formula": null,
+      "raw_result": null,
+      "rounding": null,
+      "missing": [
+        "standard_price (pricing policy not provided)",
+        "sale_start_date",
+        "sale_end_date"
+      ],
+      "status": "PRICE_DATA_REQUIRED"
+    },
+    "quantity": 1,
+    "shipping_template": "Migrated Template",
     "children": 65
   },
   "airpods4": {
-    "parent_sku": "406517-PARENT",
+    "variation": "NOT_USED",
     "compatibility": [
       "Apple AirPods (4th generation)",
       "Apple AirPods (5th generation)"
@@ -56,7 +81,32 @@
       "number_of_items": 1,
       "fulfillment": "MFN (merchant-fulfilled)"
     },
-    "variation_theme": "COLOR",
+    "pricing": {
+      "input_field": "sale_price",
+      "input_value": 22.99,
+      "currency": "USD",
+      "sale_price": 22.99,
+      "standard_price": null,
+      "list_price": 0,
+      "map_price": null,
+      "minimum_seller_allowed_price": null,
+      "maximum_seller_allowed_price": null,
+      "business_price": null,
+      "sale_start_date": null,
+      "sale_end_date": null,
+      "pricing_policy_version": null,
+      "formula": null,
+      "raw_result": null,
+      "rounding": null,
+      "missing": [
+        "standard_price (pricing policy not provided)",
+        "sale_start_date",
+        "sale_end_date"
+      ],
+      "status": "PRICE_DATA_REQUIRED"
+    },
+    "quantity": 1,
+    "shipping_template": "Migrated Template",
     "children": 65
   }
 }

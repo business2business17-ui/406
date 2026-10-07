@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 1.1 (updated with the user's confirmations of 2026-10-07; five verification passes plus a Keyword Sales reconciliation). Date 2026-10-07.
+Version 1.2 (offer data and the no-variations decision of 2026-10-07 added; rules otherwise as v1.1). Date 2026-10-07.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -111,14 +111,19 @@ Brand is `MOBILIUS` [U]. Brand attribute is `MOBILIUS`. Every title starts with 
 ### 4.3 Bullets [U]
 Each bullet up to 500 characters. The indexing limit of **1000 bytes across the five bullets exists** [U]. Therefore all priority keywords must sit inside the **first 1000 bytes of the five bullets read in order**; bytes equal characters for ASCII text. Text after byte 1000 is for shoppers only and carries no priority keyword. Source of the limit: the user's confirmation; practitioner sources agree [C] and Amazon staff recommend 1,000 characters total [B]; no Amazon document was found. [CHECKED] as a warning.
 
-### 4.3a Variations [U]
-One parent per series (Pro, AirPods 4). Variation theme `COLOR`. The `Color` value of every child must be **unique inside its parent**, otherwise Amazon does not create the variation (the theme attribute must be populated for every child [A] template). Color source: the working print names in the series files (`Color / Pattern`). The PDF catalog (`catalog_406_u001q212_u001q276_...pdf`, 4 pages, 65 thumbnails) has only SKU codes and images, no names, so it cannot replace them. All 65 thumbnails were viewed and the names match the visible subjects and slogans. They are working names, not factory names [U]. Checked on the current working names: 65 of 65 unique in each series file, case-insensitive, ASCII only, longest 38 characters. [CHECKED] by `seo_check.py --batch`. The same Color text may appear in both series (different parents), but not twice in one parent.
+### 4.3a Variations [U, changed 2026-10-07]
+**Variations are not used for now.** Every SKU is a standalone listing: no parent SKU, no variation theme, no relationship records. The earlier plan (theme `COLOR`, unique `Color` per parent) applies again only if the user turns variations on. What stays: the title must be unique per SKU (checked) and the `Color` value keeps the print name. Consequence to know: 65 standalone listings per series share the same keyword set, so they compete for the same phrases; this is the user's decision.
 
 ### 4.4 Text language
 EN US only. ASCII only. No Cyrillic and no accents in any field.
 
 ### 4.5 Item Highlights [U]
 125 characters in total for the whole field. No keyword stuffing. Facts only. Do not claim anything about their search weight (section 0a).
+
+### 4.6 Offer and price [U, 2026-10-07]
+- Input: **Sale Price 22.99 USD** (default input field `sale_price`). Quantity **1** per SKU. Shipping template **Migrated Template** (the user typed "Mirgrated template"; it is the only valid value of the template). Fulfillment MFN (`Fulfillment by Merchant (Default)`). Dangerous Goods Regulations **Not Applicable**. Item condition New is assumed and flagged.
+- The feed has **separate** fields for the base price (`Your Price USD`) and for `Sale Price USD`; a sale price needs a start and an end date. The user said "считаем от нее" (calculate from it), but gave no formula or dates. Nothing is invented: the other price fields stay empty until one pricing mode is chosen. `python3 agent1_build.py --pricing-mode standard_equals_sale` (base price = 22.99, no promotion), or `--pricing-mode reverse_discount --discount-factor F --sale-start YYYY-MM-DD --sale-end YYYY-MM-DD [--rounding END_99]` (base price = 22.99 / F). The build checks that the base price is above the sale price.
+- `List Price`: the template says to enter 0 if it cannot be provided; 0 is used and flagged. It is not an MSRP. MAP, minimum and maximum price: not set.
 
 ## 5. Product facts (the only facts the AI may use)
 
@@ -165,6 +170,10 @@ Photo 5, Pro series [U, done 2026-10-06]: in all 65 source images the captions w
 | Special Features | leave empty. `Key Ring` is not added: the item is a carabiner [U]. All claim values stay empty | [U] |
 | Brand Name | MOBILIUS | [U] |
 | Country of Origin | `China` | [U] |
+| Dangerous Goods Regulations | `Not Applicable` | [U] (2026-10-07) |
+| Quantity (US) | 1 | [U] |
+| Shipping Template (US) | `Migrated Template` | [U] (typo "Mirgrated" normalized to the valid value) |
+| Fulfillment Channel Code (US) | `Fulfillment by Merchant (Default)` | [U] (MFN) |
 | Product Id Type | `GTIN Exempt` | [U] (exemption approved for MOBILIUS in Seller Central, confirmed by the user) |
 | Item Length / Width / Height / Weight | 64 / 48 / 25 `Millimeters`, 30 `Grams` (both series; average size for AirPods 4) | [U] |
 | Manufacturer | `MOBILIUS` | [U] |
@@ -262,11 +271,12 @@ Actions for the user:
 |---|---|
 | A | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru` under the same names |
 | B | Rights decision on the print of q230 (the listing text is already neutral) |
-| C | After the first sales, replace the estimated demand with the account's own Search Query Performance and Search Term Reports |
+| C | **Choose the price mode** (section 4.6): base price equal to 22.99, or a discount factor with sale dates. Until then all 130 records are `DATA_REQUIRED` |
+| D | After the first sales, replace the estimated demand with the account's own Search Query Performance and Search Term Reports |
 
-Closed: Keyword Sales mismatch (different week, not a different metric); 1000-byte bullets limit and 2000-character description limit confirmed by the user; Item Highlights weight kept as a permanent "Amazon does not say" caveat; AirPods 4 uses the average size, shipped MFN, size numbers only in feed fields; the infographic text "DESIGNED FOR A CLOSE FIT" accepted by the user; q246 lettering handled as "lettering"; package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; variation theme `COLOR` with unique values; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
+Closed: variations not used (standalone listings); quantity 1, shipping template, Dangerous Goods Regulations Not Applicable and the input Sale Price 22.99 USD recorded (2026-10-07); Keyword Sales mismatch (different week, not a different metric); 1000-byte bullets limit and 2000-character description limit confirmed by the user; Item Highlights weight kept as a permanent "Amazon does not say" caveat; AirPods 4 uses the average size, shipped MFN, size numbers only in feed fields; the infographic text "DESIGNED FOR A CLOSE FIT" accepted by the user; q246 lettering renamed "Box Cat Lettering"; package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
 
-## 9. Verification log (six passes)
+## 9. Verification log (seven passes)
 | Pass | What was checked | Result |
 |---|---|---|
 | 1 | Primary Amazon sources read: title 75 and highlights 125 (announcement of 2026-06-10), staff answers, backend 249 bytes, trademark wording, HTML in description, feed template | done |
@@ -275,5 +285,6 @@ Closed: Keyword Sales mismatch (different week, not a different metric); 1000-by
 | 4 | Series files and PDF catalog: Color unique (65 of 65 per series after the q230 change), ASCII, 65 thumbnails viewed, descriptions cleaned, Photo 5 corrected for 65 SKUs, feed fields and valid values read from the template | done |
 | 5 (final) | Re-fetched the five Amazon threads and re-quoted them (dates, 75 / 125, 200 split into two fields, 249 bytes and the feed error text, compatibility title formula and logo rule). Re-ran Helium 10 `analyze_keywords` for all 35 phrases used in sections 6.1 and 6.2: every volume equals the number in the tables | done |
 | 6 | Keyword Sales reconciliation (2026-10-07): `get_keywords_sales_history` reproduced three file values exactly (837, 1,196, 443 for the week 2026-09-13 to 09-19) and the three MCP values (76, 253, 63) for the incomplete week 2026-09-20 to 09-26; 20 phrases checked, results in `keyword_sales_check_2026-10-07.csv` | done |
+| 7 | Agent 1 batch `US-AIRPODS-20261007-001`: 130 records built and validated (no validator errors, title unique per SKU), diff against v1.0.0 generated, pricing modes tested (standard equals sale, reverse discount with and without dates, price conflict) | done |
 
 Limits of the verification: the Amazon help pages are behind the Seller Central login and were not readable; the statements marked [A*] come from the Amazon text kept in `Amazon_Product_Title_and_Bullet_Point_Requirements.md`. The Amazon staff posts on compatibility wording are about six years old. Helium 10 numbers are estimates. Everything not confirmed is labeled [OPEN] or [C] in the text above.

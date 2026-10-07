@@ -10,6 +10,7 @@ record with seo_check.py and writes:
 Nothing is invented: price, stock, shipping template and the dangerous goods declaration are
 missing in the input and stay DATA_REQUIRED.
 """
+import argparse
 import csv
 import hashlib
 import json
@@ -19,6 +20,7 @@ import sys
 from collections import Counter
 
 import openpyxl
+from decimal import Decimal, ROUND_HALF_UP, ROUND_CEILING
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -29,6 +31,11 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
+RECORD_VERSION = "1.1.0"
+PREVIOUS_RECORD_VERSION = "1.0.0"
+SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
+QUANTITY = 1
+SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
 AGENT_VERSION = "agent1-amazon-product-intelligence/2026-10-07"
 SCHEMA_VERSION = "1.0.0"
 VERSIONS = {
@@ -106,6 +113,42 @@ FACTS = {  # user-confirmed product facts (TTX), source USER_INPUT
 }
 
 
+def money(x):
+    return float(Decimal(x).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+
+
+def price_block(a):
+    """Pricing layer. The user gave one price and the default input field is sale_price.
+    Other price fields are derived only from an explicit pricing policy; nothing is invented."""
+    p = {"input_field": "sale_price", "input_value": money(SALE_PRICE_INPUT), "currency": CURRENCY,
+         "sale_price": money(SALE_PRICE_INPUT), "standard_price": None, "list_price": 0, "map_price": None,
+         "minimum_seller_allowed_price": None, "maximum_seller_allowed_price": None, "business_price": None,
+         "sale_start_date": a.sale_start, "sale_end_date": a.sale_end, "pricing_policy_version": None,
+         "formula": None, "raw_result": None, "rounding": None, "missing": [], "status": "PRICE_DATA_REQUIRED"}
+    if a.pricing_mode == "standard_equals_sale":
+        p.update(standard_price=money(SALE_PRICE_INPUT), sale_price=None, pricing_policy_version="STANDARD_EQUALS_INPUT_v1",
+                 formula="standard_price = input price; no promotion", rounding="2_DECIMALS")
+    elif a.pricing_mode == "reverse_discount":
+        raw = SALE_PRICE_INPUT / Decimal(str(a.discount_factor))
+        if a.rounding == "END_99":
+            val = raw.to_integral_value(rounding=ROUND_CEILING) - Decimal("0.01")
+            if val < raw:
+                val += Decimal("1")
+        else:
+            val = raw
+        p.update(standard_price=money(val), pricing_policy_version=a.pricing_policy_version or "REVERSE_DISCOUNT_" + str(a.discount_factor),
+                 formula=f"standard_price = sale_price / {a.discount_factor}", raw_result=float(raw), rounding=a.rounding)
+        if not (a.sale_start and a.sale_end):
+            p["missing"] += ["sale_start_date", "sale_end_date"]
+    else:
+        p["missing"] += ["standard_price (pricing policy not provided)", "sale_start_date", "sale_end_date"]
+    if p["standard_price"] is not None and p["sale_price"] is not None and p["standard_price"] <= p["sale_price"]:
+        p["status"] = "PRICE_CONFLICT"
+    elif not p["missing"]:
+        p["status"] = "PRICE_VALID"
+    return p
+
+
 def sha(obj):
     return hashlib.sha256(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
 
@@ -157,7 +200,7 @@ def validate(key, row, content):
     return sc.check(listing)
 
 
-def attributes(key, row, content):
+def attributes(key, row, content, price):
     s = SERIES[key]
     q = row["sku"][-4:]
     theme = THEME[q]
@@ -178,7 +221,7 @@ def attributes(key, row, content):
     add("title_differentiation", content["item_highlights"], "Recommended", "CALCULATED", "HIGH", "VALID")
     add("material", FACTS["material"], "Recommended", "USER_INPUT", "HIGH", "VALID")
     add("shell_type", FACTS["shell_type"], "Conditionally Required", "USER_INPUT", "HIGH", "VALID")
-    add("color", row["color"], "Conditionally Required", "TTX_FILE", "HIGH", "VALID", "unique inside the parent (variation theme COLOR)")
+    add("color", row["color"], "Conditionally Required", "TTX_FILE", "HIGH", "VALID", "print name; variations are not used (user decision 2026-10-07)")
     add("number_of_items", FACTS["number_of_items"], "Conditionally Required", "USER_INPUT", "HIGH", "VALID")
     add("form_factor", "Case", "Conditionally Required", "DERIVED_FROM_PRODUCT_TYPE", "MEDIUM", "WARNING", "valid value Case; confirm")
     add("compatible_headphone_models", "; ".join(s["compat_models"]), "Conditionally Required", "USER_INPUT", "HIGH", "VALID", "official valid values")
@@ -197,14 +240,23 @@ def attributes(key, row, content):
     add("item_package_height_mm", FACTS["package_height_mm"], "Conditionally Required", "USER_INPUT", "HIGH", "VALID")
     add("package_weight_g", FACTS["package_weight_g"], "Conditionally Required", "USER_INPUT", "HIGH", "VALID", "carabiner included")
     add("country_of_origin", FACTS["country_of_origin"], "Required", "USER_INPUT", "HIGH", "VALID")
-    add("dangerous_goods_regulations", None, "Required", "NOT_PROVIDED", "LOW", "DATA_REQUIRED",
-        "proposed value Not Applicable; a compliance declaration, the user must confirm")
+    add("dangerous_goods_regulations", "Not Applicable", "Required", "USER_INPUT", "HIGH", "VALID", "confirmed by the user 2026-10-07")
     add("item_condition", "New", "Conditionally Required", "ASSUMED_NEW_PRODUCT", "MEDIUM", "WARNING", "confirm with the offer data")
     add("fulfillment_channel_code", "Fulfillment by Merchant (Default)", "Conditionally Required", "USER_INPUT", "HIGH", "VALID", "MFN")
-    add("quantity", None, "Conditionally Required", "NOT_PROVIDED", "LOW", "DATA_REQUIRED", "or Inventory Always Available")
-    add("shipping_template", None, "Conditionally Required", "NOT_PROVIDED", "LOW", "DATA_REQUIRED", "template name in Seller Central")
-    add("standard_price_or_sale_price", None, "Conditionally Required", "NOT_PROVIDED", "LOW", "DATA_REQUIRED", "no price in the input")
-    add("list_price", None, "Conditionally Required", "NOT_PROVIDED", "LOW", "DATA_REQUIRED", "never invent an MSRP")
+    add("quantity", QUANTITY, "Conditionally Required", "USER_INPUT", "HIGH", "VALID", "user input 2026-10-07")
+    add("shipping_template", SHIPPING_TEMPLATE, "Conditionally Required", "USER_INPUT", "HIGH", "VALID",
+        "user typed 'Mirgrated template'; normalized to the only valid value 'Migrated Template'")
+    add("sale_price_usd", price["sale_price"] if price["sale_price"] is not None else price["input_value"], "Optional", "USER_INPUT", "HIGH",
+        "VALID" if price["sale_price"] is not None else "WARNING",
+        "user input Sale Price 22.99 USD" + ("" if price["sale_price"] is not None else "; used as the standard price, no promotion"))
+    add("your_price_usd_standard_price", price["standard_price"], "Optional", "CALCULATED" if price["standard_price"] is not None else "NOT_PROVIDED",
+        "HIGH" if price["standard_price"] is not None else "LOW", "VALID" if price["standard_price"] is not None else "DATA_REQUIRED",
+        price["formula"] or "needs a pricing policy (the template has Your Price and Sale Price as separate fields)")
+    add("sale_start_date", price["sale_start_date"], "Optional", "USER_INPUT" if price["sale_start_date"] else "NOT_PROVIDED", "HIGH" if price["sale_start_date"] else "LOW",
+        "VALID" if (price["sale_start_date"] or price["sale_price"] is None) else "DATA_REQUIRED", "a sale price needs a start and an end date" if price["sale_price"] is not None else "no promotion")
+    add("sale_end_date", price["sale_end_date"], "Optional", "USER_INPUT" if price["sale_end_date"] else "NOT_PROVIDED", "HIGH" if price["sale_end_date"] else "LOW",
+        "VALID" if (price["sale_end_date"] or price["sale_price"] is None) else "DATA_REQUIRED", "a sale price needs a start and an end date" if price["sale_price"] is not None else "no promotion")
+    add("list_price", 0, "Conditionally Required", "TEMPLATE_RULE", "MEDIUM", "WARNING", "template: enter 0 if unable to provide; not an MSRP")
     return A
 
 
@@ -273,22 +325,42 @@ KEYWORDS = [  # phrase, series, SV, KS last complete week, tier, placement, stat
 ]
 
 
+def parse_args():
+    ap = argparse.ArgumentParser(description="Agent 1 build, MOBILIUS AirPods cases, Amazon US")
+    ap.add_argument("--pricing-mode", choices=["unresolved", "standard_equals_sale", "reverse_discount"], default="unresolved",
+                    help="how the other price fields are derived from the input Sale Price 22.99 USD (no mode: nothing is invented)")
+    ap.add_argument("--discount-factor", type=float, default=0.90, help="reverse_discount: standard = sale / factor")
+    ap.add_argument("--rounding", choices=["2_DECIMALS", "END_99"], default="2_DECIMALS")
+    ap.add_argument("--sale-start", default=None, help="YYYY-MM-DD, needed when a sale price is sent")
+    ap.add_argument("--sale-end", default=None, help="YYYY-MM-DD")
+    ap.add_argument("--pricing-policy-version", default=None)
+    return ap.parse_args()
+
+
 def main():
+    args = parse_args()
+    price = price_block(args)
+    VERSIONS["pricing_policy_version"] = price["pricing_policy_version"]
     out_dirs = {k: os.path.join(HERE, "output", k) for k in ("json", "jsonl", "xlsx", "issues")}
     for p in out_dirs.values():
         os.makedirs(p, exist_ok=True)
+    prev = {}
+    prev_path = os.path.join(out_dirs["jsonl"], "handoff_US_batch001.jsonl")
+    if os.path.exists(prev_path):
+        for line in open(prev_path, encoding="utf-8"):
+            r_ = json.loads(line)
+            prev[r_["sku"]] = r_
+    diffs = Counter()
     records, issues = [], []
     sheets = {n: [] for n in ("Products", "Content", "Pricing", "SEO", "Attributes", "Compatibility", "Claims",
                               "Warnings", "Images", "Versions", "Audit", "Handoff")}
     glob = {}
     for key in ("pro", "airpods4"):
         rows = load_series(key)
-        # uniqueness inside the parent (variation theme COLOR)
-        colors = Counter(r["color"].lower() for r in rows)
-        assert all(v == 1 for v in colors.values()), "duplicate Color inside parent"
+        # variations are not used (user decision 2026-10-07): every SKU is a standalone listing, titles must stay unique
         titles = {}
-        glob[key] = {"parent_sku": SERIES[key]["parent_sku"], "compatibility": SERIES[key]["compat_models"], "facts": FACTS,
-                     "variation_theme": "COLOR", "children": len(rows)}
+        glob[key] = {"variation": "NOT_USED", "compatibility": SERIES[key]["compat_models"], "facts": FACTS,
+                     "pricing": price, "quantity": QUANTITY, "shipping_template": SHIPPING_TEMPLATE, "children": len(rows)}
         for row in rows:
             q = row["sku"][-4:]
             content = build_content(key, row)
@@ -297,40 +369,47 @@ def main():
             if t in titles:
                 errs.append(f"title duplicates {titles[t]} inside parent")
             titles[t] = row["sku"]
-            attrs = attributes(key, row, content)
+            attrs = attributes(key, row, content, price)
             ev = evidence(key, row, content)
             unresolved = sorted({a["attribute"] for a in attrs if a["status"] == "DATA_REQUIRED" and a["required"] == "Required"}
-                                | {"standard_price_or_sale_price", "quantity", "shipping_template"})
+                                | set(price["missing"]))
+            price_attrs = ("your_price_usd_standard_price", "sale_start_date", "sale_end_date")
             cond_open = sorted(a["attribute"] for a in attrs if a["status"] == "DATA_REQUIRED" and a["required"] != "Required"
-                               and a["attribute"] not in ("standard_price_or_sale_price", "quantity", "shipping_template", "list_price"))
+                               and a["attribute"] not in price_attrs)
             hard = [f"VALIDATOR: {e}" for e in errs]
-            hard += ["REQUIRED_ATTRIBUTE_MISSING: " + u for u in unresolved]
+            hard += [("PRICE_DATA_REQUIRED: " if u.startswith(("standard_price", "sale_")) else "REQUIRED_ATTRIBUTE_MISSING: ") + u for u in unresolved]
+            if price["status"] == "PRICE_CONFLICT":
+                hard.append("PRICE_CONFLICT: standard price is not above the sale price")
             warnings = [f"VALIDATOR: {w}" for w in warns]
             warnings += ["CONDITIONAL_ATTRIBUTE_NOT_DETERMINED: " + c for c in cond_open]
             if not THEME[q]:
                 warnings.append("THEME_REVIEW: no clear valid value for this print")
-            warnings.append("PARENT_SKU_PROPOSED: " + SERIES[key]["parent_sku"] + " (confirm)")
             if q not in VERIFIED_IMAGE_MATCH:
                 warnings.append("IMAGE_SKU_MATCH_MEDIUM: thumbnail viewed, not itemized")
             if q == "q230":
                 warnings.append("POLICY_RISK_REVIEW: print resembles a known character; rights decision with the user")
-            status = "BLOCKED" if errs else "DATA_REQUIRED"
-            pricing = {"price_input_mode": None, "sale_price": None, "standard_price": None, "list_price": None, "map_price": None,
-                       "minimum_seller_allowed_price": None, "maximum_seller_allowed_price": None, "currency": CURRENCY,
-                       "pricing_policy_version": None, "status": "PRICE_DATA_REQUIRED"}
+            if errs:
+                status = "BLOCKED"
+            elif price["status"] == "PRICE_CONFLICT":
+                status = "PRICE_CONFLICT"
+            elif unresolved:
+                status = "DATA_REQUIRED"
+            else:
+                status = "READY_WITH_WARNINGS"
+            pricing = dict(price)
             catalog = {a["attribute"]: {"value": a["value"], "status": a["status"], "source": a["source"], "confidence": a["confidence"]}
                        for a in attrs if a["attribute"] not in ("item_name", "product_description", "bullet_points", "generic_keyword", "title_differentiation")}
             source_in = {"sku": row["sku"], "color": row["color"], "series": key, "facts": FACTS}
             rec = {
                 "handoff_schema_version": SCHEMA_VERSION, "batch_id": BATCH_ID, "generated_at": GENERATED_AT,
                 "generated_by_agent_version": AGENT_VERSION, "internal_product_id": "MOBILIUS-" + row["sku"],
-                "sku": row["sku"], "marketplace": MARKETPLACE, "language": LANGUAGE, "record_version": "1.0.0",
+                "sku": row["sku"], "marketplace": MARKETPLACE, "language": LANGUAGE, "record_version": RECORD_VERSION,
                 "operation_intent": "CREATE", "publish_status": status, "identifier_mode": "GTIN_EXEMPT",
                 "identifiers": {"ean": None, "upc": None, "gtin": None, "asin": None, "gtin_exempt": True, "status": "GTIN_EXEMPT"},
                 "product_type": {"value": "PORTABLE_ELECTRONIC_DEVICE_COVER", "status": "CATEGORY_CONFIRMED", "confidence": "HIGH",
                                  "browse_node": "headphone-cases", "locked": True},
-                "variation": {"parent_sku": SERIES[key]["parent_sku"], "parent_sku_status": "PROPOSED", "theme": "COLOR",
-                              "color": row["color"], "status": "VARIATION_READY"},
+                "variation": {"status": "NOT_USED", "reason": "user decision 2026-10-07: variations are not needed yet",
+                              "parent_sku": None, "theme": None, "color": row["color"]},
                 "catalog": catalog,
                 "content": {"title": content["title"], "item_highlights": content["item_highlights"],
                             "bullet_points": content["bullet_points"], "description": content["description"],
@@ -342,16 +421,34 @@ def main():
                                   "status": "COMPATIBILITY_VERIFIED", "source": "USER_INPUT"},
                 "claims": [c for c in GLOBAL_CLAIMS if c[0] in ("ALL", key, q)],
                 "evidence": ev,
-                "changed_fields": ["title", "item_highlights", "bullet_points", "description", "backend_search_terms", "catalog"],
+                "changed_fields": [],
                 "unresolved_required_fields": unresolved, "hard_blockers": hard, "warnings": warnings,
                 "versions": VERSIONS,
                 "audit": {"generated_from": [SERIES[key]["file"], "SEO-Rules.md v1.1", "Feed AirPods Cases.xlsm"],
                           "source_types": ["USER_INPUT", "TTX", "CATALOG", "SEO", "CALCULATED"]},
             }
+            old = prev.get(row["sku"])
+            if old:
+                def flat(r_):
+                    d = {"content." + k: v for k, v in r_["content"].items()}
+                    d.update({"pricing." + k: v for k, v in r_["pricing"].items() if k != "missing"})
+                    d.update({"catalog." + k: (v["value"], v["status"]) if isinstance(v, dict) else v for k, v in r_["catalog"].items()})
+                    d["variation.status"] = r_["variation"].get("status")
+                    d["publish_status"] = r_["publish_status"]
+                    return d
+                fo, fn = flat(old), flat(rec)
+                for k in sorted(set(fo) | set(fn)):
+                    if fo.get(k) != fn.get(k):
+                        diffs[(k, json.dumps(fo.get(k), ensure_ascii=False)[:90], json.dumps(fn.get(k), ensure_ascii=False)[:90])] += 1
+                rec["changed_fields"] = sorted(k for k in set(fo) | set(fn) if fo.get(k) != fn.get(k))
             rec["hashes"] = {"source_hash": sha(source_in), "content_hash": sha(rec["content"]), "pricing_hash": sha(pricing)}
+            rec["hashes"]["catalog_hash"] = sha(rec["catalog"])
             rec["hashes"]["record_hash"] = sha({k: v for k, v in rec.items() if k != "hashes"})
-            rec["idempotency_key"] = sha([rec["internal_product_id"], MARKETPLACE, "CREATE", rec["hashes"]["content_hash"]])[:32]
-            rec["rollback"] = {"previous_record_version": None, "previous_content_hash": None, "previous_pricing_hash": None}
+            rec["idempotency_key"] = sha([rec["internal_product_id"], MARKETPLACE, "CREATE", rec["hashes"]["content_hash"],
+                                          rec["hashes"]["pricing_hash"], rec["hashes"]["catalog_hash"]])[:32]
+            rec["rollback"] = ({"previous_record_version": old["record_version"], "previous_content_hash": old["hashes"]["content_hash"],
+                                "previous_pricing_hash": old["hashes"]["pricing_hash"]} if old else
+                               {"previous_record_version": None, "previous_content_hash": None, "previous_pricing_hash": None})
             records.append(rec)
             for h in hard:
                 issues.append((row["sku"], "HARD_BLOCKER", h))
@@ -362,7 +459,9 @@ def main():
                                        content["title"], row["model"], "PORTABLE_ELECTRONIC_DEVICE_COVER", MARKETPLACE, "China", status])
             sheets["Content"].append([row["sku"], MARKETPLACE, LANGUAGE, content["title"], content["item_highlights"], *content["bullet_points"],
                                       content["description"], content["backend_search_terms"], content["backend_bytes"]])
-            sheets["Pricing"].append([row["sku"], MARKETPLACE, CURRENCY] + [None] * 11 + [None, "PRICE_DATA_REQUIRED"])
+            sheets["Pricing"].append([row["sku"], MARKETPLACE, CURRENCY, price["sale_price"], price["standard_price"], price["list_price"],
+                                      price["map_price"], price["minimum_seller_allowed_price"], price["maximum_seller_allowed_price"],
+                                      price["business_price"], None, None, None, None, price["pricing_policy_version"], price["status"]])
             for a in attrs:
                 sheets["Attributes"].append([row["sku"], a["attribute"], a["value"], a["source"], a["confidence"], a["required"], a["status"], a["note"]])
                 sheets["Audit"].append([row["sku"], a["attribute"], a["value"], a["source"], VERSIONS["product_data_version"], a["confidence"], a["status"], GENERATED_AT])
@@ -379,9 +478,9 @@ def main():
                                          "HIGH" if q in VERIFIED_IMAGE_MATCH else "MEDIUM",
                                          "captions front/back corrected locally: upload fixed_images/pro_photo5/" + row["sku"] + "_5.jpg" if fixed else "",
                                          "Required" if i == 1 else "Optional", "IMAGE_SUFFICIENT", url])
-            sheets["Versions"].append([row["sku"], MARKETPLACE, "1.0.0", VERSIONS["seo_version"], VERSIONS["product_data_version"],
-                                       None, VERSIONS["amazon_policy_version"], rec["hashes"]["source_hash"], rec["hashes"]["content_hash"], GENERATED_AT])
-            sheets["Handoff"].append([SCHEMA_VERSION, BATCH_ID, rec["internal_product_id"], row["sku"], MARKETPLACE, "1.0.0", "CREATE", status,
+            sheets["Versions"].append([row["sku"], MARKETPLACE, RECORD_VERSION, VERSIONS["seo_version"], VERSIONS["product_data_version"],
+                                       price["pricing_policy_version"], VERSIONS["amazon_policy_version"], rec["hashes"]["source_hash"], rec["hashes"]["content_hash"], GENERATED_AT])
+            sheets["Handoff"].append([SCHEMA_VERSION, BATCH_ID, rec["internal_product_id"], row["sku"], MARKETPLACE, RECORD_VERSION, "CREATE", status,
                                       "GTIN_EXEMPT", "PORTABLE_ELECTRONIC_DEVICE_COVER", "LOCKED", ", ".join(rec["changed_fields"]),
                                       ", ".join(unresolved), " | ".join(hard), " | ".join(warnings), rec["hashes"]["source_hash"],
                                       rec["hashes"]["content_hash"], rec["hashes"]["pricing_hash"], rec["hashes"]["record_hash"],
@@ -392,6 +491,12 @@ def main():
     with open(os.path.join(out_dirs["jsonl"], "handoff_US_batch001.jsonl"), "w", encoding="utf-8") as f:
         for r in records:
             f.write(json.dumps(r, ensure_ascii=False, sort_keys=True) + "\n")
+    if diffs:
+        with open(os.path.join(out_dirs["issues"], f"diff_batch001_v{PREVIOUS_RECORD_VERSION}_to_v{RECORD_VERSION}.csv"), "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f)
+            w.writerow(["field", "old", "new", "records_changed"])
+            for (k, o, n), c in sorted(diffs.items()):
+                w.writerow([k, o, n, c])
     json.dump(glob, open(os.path.join(out_dirs["json"], "global_product_data_US.json"), "w", encoding="utf-8"), indent=2, ensure_ascii=False)
     with open(os.path.join(out_dirs["issues"], "issues_US_batch001.csv"), "w", newline="", encoding="utf-8") as f:
         w = csv.writer(f)
@@ -460,7 +565,12 @@ def main():
     summary = [f"# Batch summary {BATCH_ID}", "", f"Total SKUs: {len(records)} (65 Pro, 65 AirPods 4/5), marketplace {MARKETPLACE}", ""]
     for s_ in ("READY_TO_PUBLISH", "READY_WITH_WARNINGS", "NEEDS_REVIEW", "DATA_REQUIRED", "BLOCKED", "POLICY_RISK", "PRICE_CONFLICT"):
         summary.append(f"- {s_}: {status_counts.get(s_, 0)}")
-    summary += ["", "Hard blockers (count of records):"] + [f"- {k}: {v}" for k, v in sorted(hb.items())]
+    summary += ["", f"Pricing: input Sale Price {price['input_value']} {CURRENCY}; mode {args.pricing_mode}; price status {price['status']}"
+                + (f"; missing: {', '.join(price['missing'])}" if price["missing"] else ""),
+                "Quantity 1, shipping template 'Migrated Template', Dangerous Goods Regulations 'Not Applicable' (user, 2026-10-07).",
+                "Variations: not used (user decision); every SKU is a standalone listing.",
+                "Note: 65 standalone listings per series share the same keyword set and compete for the same phrases (cannibalization).",
+                "", "Hard blockers (count of records):"] + [f"- {k}: {v}" for k, v in sorted(hb.items())]
     open(os.path.join(out_dirs["issues"], "batch_summary.md"), "w", encoding="utf-8").write("\n".join(summary) + "\n")
     print("\n".join(summary))
     print("xlsx:", xlsx)
