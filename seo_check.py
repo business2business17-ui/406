@@ -18,8 +18,8 @@ from collections import Counter
 TITLE_MAX = 75              # Amazon announcement 2026-06-10, brand counts (user decision)
 HIGHLIGHT_MAX = 125         # Amazon announcement
 BULLET_MAX = 500            # user decision (Amazon staff: 500 per bullet recommended)
-BULLET_PRIORITY_BYTES = 1000  # user decision: priority keywords inside first 1000 bytes of 5 bullets
-DESC_MAX = 2000             # widely stated, no Amazon-staff source found (OPEN)
+BULLET_PRIORITY_BYTES = 1000  # user-confirmed indexing limit across the five bullets
+DESC_MAX = 2000             # confirmed by the user
 BACKEND_MAX_BYTES = 249     # Amazon staff (Cooper_Amazon), "Keyword attributes explained"
 BACKEND_TARGET_BYTES = 240  # safety margin below 249
 
@@ -133,7 +133,7 @@ def check(listing):
         if re.search(r"\d(mm|cm|in|g|oz)\b", x):
             errs.append(f"bullet {i}: missing space between number and unit")
     if total > BULLET_PRIORITY_BYTES:
-        warns.append(f"bullets: total {total} bytes; only the first {BULLET_PRIORITY_BYTES} bytes are assumed indexed. "
+        warns.append(f"bullets: total {total} bytes; only the first {BULLET_PRIORITY_BYTES} bytes are indexed. "
                      f"Priority keywords must sit inside them")
     joined = " ".join(bl)
 
