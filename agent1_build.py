@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.2.0"
-PREVIOUS_RECORD_VERSION = "1.1.0"
+RECORD_VERSION = "1.3.0"
+PREVIOUS_RECORD_VERSION = "1.2.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -141,7 +141,8 @@ def price_block(a):
         else:
             val = raw
         p.update(standard_price=money(val), pricing_policy_version=a.pricing_policy_version or "REVERSE_DISCOUNT_" + str(a.discount_factor),
-                 formula=f"standard_price = sale_price / {a.discount_factor}", raw_result=float(raw), rounding=a.rounding)
+                 formula=f"standard_price = sale_price / {a.discount_factor}", raw_result=float(raw), rounding=a.rounding,
+                 check_standard_times_factor=money(Decimal(str(money(val))) * Decimal(str(a.discount_factor))))
     else:
         p["missing"].append("standard_price (pricing policy not provided)")
     if p["sale_price"] is not None:
@@ -351,7 +352,7 @@ def parse_args():
     ap.add_argument("--rounding", choices=["2_DECIMALS", "END_99"], default=cfg.get("rounding", "2_DECIMALS"))
     ap.add_argument("--sale-start", default=cfg.get("sale_start_date"), help="YYYY-MM-DD, needed when a sale price is sent")
     ap.add_argument("--sale-end", default=cfg.get("sale_end_date"), help="YYYY-MM-DD")
-    ap.add_argument("--pricing-policy-version", default=None)
+    ap.add_argument("--pricing-policy-version", default=cfg.get("pricing_policy_version"))
     a = ap.parse_args()
     if a.pricing_mode == "reverse_discount" and not a.discount_factor:
         ap.error("reverse_discount needs --discount-factor")

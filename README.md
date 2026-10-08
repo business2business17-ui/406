@@ -17,4 +17,4 @@
 | `output/xlsx/AirPods_US_Agent1_Review_batch001.xlsx` | Human review file: Products, Content, Pricing, SEO, Attributes, Compatibility, Claims, Warnings, Images, Versions, Audit, Handoff |
 | `output/issues/` | `batch_summary.md`, `issues_US_batch001.csv`, `seo_sanitization_report.md` |
 | `output/json/global_product_data_US.json` | Global product facts per series |
-| `pricing_input.json` | Price inputs for the build: Sale Price 22.99 USD, sale window 2026-10-08 to 2027-05-08, pricing mode and base price (to fill) |
+| `pricing_input.json` | Price inputs for the build: Sale Price 22.99 USD, sale window 2026-10-08 to 2027-05-08, reverse discount 0.90 (base price 25.54). Edit to change the base price |

@@ -4,9 +4,10 @@
   "currency": "USD",
   "sale_start_date": "2026-10-08",
   "sale_end_date": "2027-05-08",
-  "pricing_mode": "unresolved",
-  "discount_factor": null,
+  "pricing_mode": "reverse_discount",
+  "discount_factor": 0.9,
   "standard_price": null,
   "rounding": "2_DECIMALS",
-  "note": "Sale Price 22.99 USD and the sale window were given by the user (2026-10-07 / 2026-10-08). The base price (Your Price) is not set: give a standard_price number or a discount_factor. Modes: unresolved | standard_equals_sale | reverse_discount | explicit_standard."
+  "note": "Sale Price 22.99 USD and the sale window 2026-10-08 to 2027-05-08 are user input. On 2026-10-08 the user said: calculate all other prices per the skill. The only numeric rule in the amazon-product-intelligence skill is the reverse-discount example Sale = Standard x 0.90, so Standard = Sale / 0.90, rounded to 2 decimals (no psychological rounding). List Price, MAP, min/max allowed price, business and quantity prices are NOT derived: the skill forbids deriving them without a configured policy. Change discount_factor to change the base price.",
+  "pricing_policy_version": "SKILL_REVERSE_DISCOUNT_0.90_v1"
 }

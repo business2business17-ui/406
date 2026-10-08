@@ -1,0 +1,10 @@
+field,old,new,records_changed
+catalog.your_price_usd_standard_price,"[null, ""DATA_REQUIRED""]","[25.54, ""VALID""]",130
+pricing.check_standard_times_factor,null,22.99,130
+pricing.formula,null,"""standard_price = sale_price / 0.9""",130
+pricing.pricing_policy_version,null,"""SKILL_REVERSE_DISCOUNT_0.90_v1""",130
+pricing.raw_result,null,25.544444444444444,130
+pricing.rounding,null,"""2_DECIMALS""",130
+pricing.standard_price,null,25.54,130
+pricing.status,"""PRICE_DATA_REQUIRED""","""PRICE_VALID""",130
+publish_status,"""DATA_REQUIRED""","""READY_WITH_WARNINGS""",130

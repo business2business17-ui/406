@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 1.3 (sale window of 2026-10-08 added; rules otherwise as v1.2). Date 2026-10-08.
+Version 1.4 (base price derived by the skill rule, 2026-10-08; rules otherwise as v1.3). Date 2026-10-08.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -123,7 +123,9 @@ EN US only. ASCII only. No Cyrillic and no accents in any field.
 ### 4.6 Offer and price [U, 2026-10-07]
 - Input: **Sale Price 22.99 USD** (default input field `sale_price`). Quantity **1** per SKU. Shipping template **Migrated Template** (the user typed "Mirgrated template"; it is the only valid value of the template). Fulfillment MFN (`Fulfillment by Merchant (Default)`). Dangerous Goods Regulations **Not Applicable**. Item condition New is assumed and flagged.
 - **Sale window [U, 2026-10-08]: 2026-10-08 to 2027-05-08** (the user wrote 08.10.2026 to 08.05.2027, day.month.year). The template says the sale price starts to show after 0:00 of the start date. The window is stored in `pricing_input.json`.
-- The feed has **separate** fields for the base price (`Your Price USD`) and for `Sale Price USD`; a sale price needs the start and end dates, which are now set. **The base price is still missing**: the user said "считаем от нее" (calculate from it) but gave no number and no factor. Nothing is invented. Fill `pricing_input.json` (or pass options) with one of: `explicit_standard` plus `standard_price` (a USD number), `reverse_discount` plus `discount_factor` (base price = 22.99 / factor, rounding `2_DECIMALS` or `END_99`). `standard_equals_sale` (base price 22.99, no promotion) would drop the sale window and is not consistent with the dates given. The build checks that the base price is above the sale price and that the end date is not before the start date.
+- The feed has **separate** fields for the base price (`Your Price USD`) and for `Sale Price USD`; a sale price needs the start and end dates (set above).
+- **Derived prices [U instruction 2026-10-08: "calculate all other prices per the skill"].** The `amazon-product-intelligence` skill allows derived prices only from a configured pricing policy and forbids inventing percentages. Its only numeric rule is the reverse-discount example (Sale = Standard x 0.90, so Standard = Sale / 0.90), and that is what was applied: **Standard Price = 22.99 / 0.90 = 25.5444 raw, 25.54 after `2_DECIMALS` rounding** (no psychological rounding unless configured). Check: 25.54 x 0.90 = 22.99 after rounding. Policy label `SKILL_REVERSE_DISCOUNT_0.90_v1`, stored with formula, raw and rounded result in each record. To use another factor or a fixed base price, edit `pricing_input.json` (`discount_factor`, or mode `explicit_standard` with `standard_price`) and rebuild.
+- **Not derived, by the skill's rules:** `List Price` (no fabricated MSRP, no artificial list price to show a discount), MAP (never unless configured), minimum and maximum allowed price, business price and quantity tiers (no configured policy). They stay empty.
 - `List Price`: the template says to enter 0 if it cannot be provided; 0 is used and flagged. It is not an MSRP. MAP, minimum and maximum price: not set.
 
 ## 5. Product facts (the only facts the AI may use)
@@ -272,7 +274,7 @@ Actions for the user:
 |---|---|
 | A | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru` under the same names |
 | B | Rights decision on the print of q230 (the listing text is already neutral) |
-| C | **Give the base price** (section 4.6): a USD number or a discount factor (base = 22.99 / factor). The sale window is set. Until then all 130 records are `DATA_REQUIRED`, with one blocker: `standard_price` |
+| C | **Confirm the base price 25.54** (22.99 / 0.90, section 4.6). It shows as the reference price with a 10% discount from 2026-10-08 to 2027-05-08. If you meant another factor, change `discount_factor` in `pricing_input.json` |
 | D | After the first sales, replace the estimated demand with the account's own Search Query Performance and Search Term Reports |
 
 Closed: variations not used (standalone listings); quantity 1, shipping template, Dangerous Goods Regulations Not Applicable and the input Sale Price 22.99 USD recorded (2026-10-07); Keyword Sales mismatch (different week, not a different metric); 1000-byte bullets limit and 2000-character description limit confirmed by the user; Item Highlights weight kept as a permanent "Amazon does not say" caveat; AirPods 4 uses the average size, shipped MFN, size numbers only in feed fields; the infographic text "DESIGNED FOR A CLOSE FIT" accepted by the user; q246 lettering renamed "Box Cat Lettering"; package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
