@@ -1,24 +1,21 @@
 {
- "status": "NOT_READY_FOR_AMAZON_UPLOAD",
- "reason": "Template-required Included Components (BX) is empty in all 130 rows by user decision (option B: try upload and let Amazon decide)",
+ "status": "READY_FOR_AMAZON_UPLOAD",
  "rows": 130,
- "blocked_fields": [
-  "BX"
- ],
- "open_user_actions": [
-  "rights decision for print q230"
- ],
+ "template_required_fields_empty": 0,
+ "remaining_user_actions": [],
+ "pricing_policy_version": "2026-10-08-v3",
  "user_decisions_2026-10-08": {
   "special_features": "Flexible; Lightweight",
-  "included_components": "empty",
+  "included_components": "Handle (user decision; the list has no value for the carabiner)",
   "warranty_description": "30 days manufacturer",
   "pro_photo5": "not used",
-  "min_price": "Sale -4% = 22.07 (answer \"Min. 4 штуки\"; equals the 4-pc tier price)",
-  "max_price": "Sale +20% = 27.59 (confirmed); audience ALL only, B2B min/max empty per policy v3",
+  "min_price": "Sale -4% = 22.07",
+  "max_price": "Sale +20% = 27.59, audience ALL only",
+  "quantity_tiers": "Fixed from Sale: 2 pcs 22.53, 4 pcs 22.07 (warning: above Business Price 20.69)",
   "airpods4_size": "average",
-  "quantity_tiers": "Fixed; from Sale: 2 pcs 22.53 (-2%), 4 pcs 22.07 (-4%); warning QUANTITY_TIER_n_ABOVE_BUSINESS_PRICE (business 20.69)"
+  "q230": "accepted"
  },
- "feed_sha256": "13e486f3dc3b38b060f7c4431b583d78213cd5987f6b60c9de786159afedea16",
+ "feed_sha256": "d7c8f7f98018e023c4a32e41c8d6f002025758deb4ad69d028f0455807cbd120",
  "template_sha256": "fd50ed0b704aec515949892007f17c45d060f59201ad24c753033b0b1259f925",
- "pricing_policy_version": "2026-10-08-v3"
+ "note": "Amazon's own acceptance is only known after upload."
 }
