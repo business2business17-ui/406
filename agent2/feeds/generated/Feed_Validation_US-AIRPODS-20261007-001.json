@@ -3,8 +3,8 @@
  "audit": {
   "zip_ok": true,
   "non_template_parts_identical": true,
-  "sheet_names_same": true,
-  "sheet_states_same": true,
+  "macro_parts_identical_to_template": true,
+  "sheet_names_and_states_same": true,
   "rows1_6_identical": true,
   "row_alignment_mismatch": 0,
   "minimum_field_failures": 0,
@@ -12,24 +12,25 @@
   "rows_written": 130,
   "formula_cells_in_data": 0,
   "text_roundtrip_bad": 0,
-  "issues": 0,
-  "price_tuples": [
+  "template_rule_and_enum_issues": 0,
+  "pro_photo5_present": 0,
+  "airpods_pro_3rd_used": 0,
+  "price_tuples(EV,EZ,FE,EX,EY,FL,FN,FF,FG)": [
    [
     25.54,
     22.99,
     20.69,
-    22.07,
+    19.86,
     27.59,
-    22.53,
-    22.07,
+    20.28,
+    19.86,
+    null,
+    null,
     130
    ]
   ],
-  "pro_photo5_present": 0,
-  "AirPods_Pro_3rd_used": 0,
-  "final_audit": "PASS",
-  "macro_parts_identical_to_template": true,
-  "macro_note": "the supplied template contains no vbaProject part (only the macro-enabled content type); nothing to lose, content types identical"
+  "price_logic": true,
+  "final_audit": "PASS"
  },
  "issues": []
 }

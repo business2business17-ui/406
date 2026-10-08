@@ -8,12 +8,11 @@
   "discount_factor": 0.9,
   "standard_price": null,
   "rounding": "2_DECIMALS",
-  "note": "Policy v3 (2026-10-08-v3). Sale Price 22.99 USD (input); Standard = Sale/(1-0.10); Business = Sale x (1-0.10). User percents given 2026-10-08: min = 4% below Sale (answer 'Min. 4 штуки', equals the 4-pc tier price), max = 20% above Sale (confirmed); min/max for audience ALL only, B2B min/max empty. Quantity tiers (B2B, Fixed): 2 pcs = Sale -2%, 4 pcs = Sale -4%, taken from the Sale Price.",
+  "note": "Policy v3 with explicit user overrides (2026-10-08): quantity tiers (B2B, Fixed) are taken from the Business Price, not the Sale Price, because tier prices must be below the Business Price: 2 pcs = Business -2%, 4 pcs = Business -4%. Min allowed price = price of the 4-pc tier (answer 'Min. 4 штуки'); max = Sale +20% (confirmed); min/max for audience ALL only, B2B min/max empty.",
   "pricing_policy_version": "2026-10-08-v3",
   "min_price_rule": {
-    "base": "sale_price",
-    "op": "discount_pct",
-    "value": 4
+    "base": "quantity_tier",
+    "lower_bound": 4
   },
   "max_price_rule": {
     "base": "sale_price",
@@ -35,5 +34,6 @@
       "lower_bound": 4,
       "discount_pct": 4
     }
-  ]
+  ],
+  "quantity_tier_base": "business_price"
 }

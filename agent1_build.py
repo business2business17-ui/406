@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.7.0"
-PREVIOUS_RECORD_VERSION = "1.6.0"
+RECORD_VERSION = "1.8.0"
+PREVIOUS_RECORD_VERSION = "1.7.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -157,7 +157,9 @@ def derive_extra_prices(p, policy):
     if tiers:
         p["quantity_price_type"] = policy.get("quantity_price_type", "Percent")
         out = []
-        base = sale_ref  # policy v3: quantity prices are taken from the Sale Price
+        # policy v3 default: tiers from the Sale Price; explicit user override (2026-10-08): tiers below the Business Price
+        base = p["business_price"] if (policy.get("quantity_tier_base") == "business_price" and p["business_price"] is not None) else sale_ref
+        p["quantity_tier_base"] = "business_price" if base == p["business_price"] and policy.get("quantity_tier_base") == "business_price" else "sale_price"
         for t in tiers:
             pct = t.get("discount_pct", t.get("value") if p["quantity_price_type"] == "Percent" else None)
             price = money(Decimal(str(base)) * (Decimal(100) - Decimal(str(pct))) / Decimal(100)) if (base is not None and pct is not None) else t.get("value")
@@ -166,13 +168,13 @@ def derive_extra_prices(p, policy):
             else:
                 e = {"lower_bound": t["lower_bound"], "fixed_price": price, "resulting_unit_price": price}
                 if pct is not None:
-                    e["discount_pct_of_sale_price"] = pct
+                    e["discount_pct_of_" + p["quantity_tier_base"]] = pct
                 out.append(e)
         p["quantity_tiers"] = out
         if min_rule and min_rule.get("base") == "quantity_tier":  # minimum = resulting unit price of the named tier
             hit = [t for t in out if t["lower_bound"] == min_rule["lower_bound"]]
             p["minimum_seller_allowed_price"] = hit[0]["resulting_unit_price"] if hit else None
-    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds") if policy.get(k)}
+    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds", "quantity_tier_base") if policy.get(k)}
     # order checks: min <= sale <= standard <= max; tier prices strictly decreasing and not below the minimum price
     msgs = []
     std = p["standard_price"]
@@ -477,7 +479,7 @@ def parse_args():
     ap.add_argument("--sale-end", default=cfg.get("sale_end_date"), help="YYYY-MM-DD")
     ap.add_argument("--pricing-policy-version", default=cfg.get("pricing_policy_version"))
     a = ap.parse_args()
-    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds") if cfg.get(k)}
+    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds", "quantity_tier_base") if cfg.get(k)}
     if a.pricing_mode == "reverse_discount" and not a.discount_factor:
         ap.error("reverse_discount needs --discount-factor")
     if a.pricing_mode == "explicit_standard" and not a.standard_price:
@@ -616,7 +618,7 @@ def main():
             sheets["Content"].append([row["sku"], MARKETPLACE, LANGUAGE, content["title"], content["item_highlights"], *content["bullet_points"],
                                       content["description"], content["backend_search_terms"], content["backend_bytes"]])
             if price.get("quantity_tiers"):
-                tier_cells = [f"{t['lower_bound']}+ units: " + (f"fixed {t['fixed_price']}" + (f" ({t['discount_pct_of_sale_price']}% off sale price)" if "discount_pct_of_sale_price" in t else "")
+                tier_cells = [f"{t['lower_bound']}+ units: " + (f"fixed {t['fixed_price']}" + (f" ({t['discount_pct_of_' + price['quantity_tier_base']]}% off {price['quantity_tier_base']})" if ("discount_pct_of_" + price['quantity_tier_base']) in t else "")
                                                                if "fixed_price" in t else f"{t['discount_pct']}% off = {t['resulting_unit_price']}")
                               for t in price["quantity_tiers"]][:4]
             else:

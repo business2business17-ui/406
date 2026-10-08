@@ -1,23 +1,8 @@
 {
  "status": "READY_FOR_AMAZON_UPLOAD",
- "rows": 130,
- "template_required_fields_empty": 0,
- "remaining_user_actions": [],
- "pricing_policy_version": "2026-10-08-v3",
- "user_decisions_2026-10-08": {
-  "special_features": "Flexible; Lightweight",
-  "included_components": "Handle (user decision; the list has no value for the carabiner)",
-  "warranty_description": "30 days manufacturer",
-  "pro_photo5": "not used",
-  "min_price": "Sale -4% = 22.07",
-  "max_price": "Sale +20% = 27.59, audience ALL only",
-  "quantity_tiers": "Fixed from Sale: 2 pcs 22.53, 4 pcs 22.07 (warning: above Business Price 20.69)",
-  "airpods4_size": "average",
-  "q230": "accepted"
- },
- "feed_sha256": "55dd0cb6635483d6ec941cedb3aab1c92a9e734342966796f3915ab70a48b74c",
+ "feed": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_003.xlsm",
+ "feed_sha256": "7b1ec062727f0a4122303c0b19923a77aca0eb62cf848a7cf2f2987c4dbebe7a",
  "template_sha256": "0a2eb7bfca9cd11ae3b64a73df29f4ccd61987e7abc49d745b064a2b3c454a67",
- "note": "Amazon's own acceptance is only known after upload.",
- "feed": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_002.xlsm",
+ "rows": 130,
  "identifier_mode": "GTIN Exempt"
 }

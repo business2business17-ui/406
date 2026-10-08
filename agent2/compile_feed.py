@@ -75,7 +75,7 @@ def main():
     sheet = sheet.replace("</sheetData>", xml_rows + "</sheetData>", 1)
     sheet = re.sub(r'<dimension ref="A1:LD6"/>', f'<dimension ref="A1:LD{6 + len(rows)}"/>', sheet, 1)
     os.makedirs(OUT, exist_ok=True)
-    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_002.xlsm"
+    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_003.xlsm"
     path = os.path.join(OUT, name)
     with zipfile.ZipFile(path, "w") as zo:
         for info in z.infolist():
