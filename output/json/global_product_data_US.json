@@ -37,16 +37,14 @@
       "minimum_seller_allowed_price": null,
       "maximum_seller_allowed_price": null,
       "business_price": null,
-      "sale_start_date": null,
-      "sale_end_date": null,
+      "sale_start_date": "2026-10-08",
+      "sale_end_date": "2027-05-08",
       "pricing_policy_version": null,
       "formula": null,
       "raw_result": null,
       "rounding": null,
       "missing": [
-        "standard_price (pricing policy not provided)",
-        "sale_start_date",
-        "sale_end_date"
+        "standard_price (pricing policy not provided)"
       ],
       "status": "PRICE_DATA_REQUIRED"
     },
@@ -92,16 +90,14 @@
       "minimum_seller_allowed_price": null,
       "maximum_seller_allowed_price": null,
       "business_price": null,
-      "sale_start_date": null,
-      "sale_end_date": null,
+      "sale_start_date": "2026-10-08",
+      "sale_end_date": "2027-05-08",
       "pricing_policy_version": null,
       "formula": null,
       "raw_result": null,
       "rounding": null,
       "missing": [
-        "standard_price (pricing policy not provided)",
-        "sale_start_date",
-        "sale_end_date"
+        "standard_price (pricing policy not provided)"
       ],
       "status": "PRICE_DATA_REQUIRED"
     },

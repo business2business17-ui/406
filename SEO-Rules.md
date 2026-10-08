@@ -1,6 +1,6 @@
 # SEO-Rules: MOBILIUS AirPods cases, Amazon US (EN US)
 
-Version 1.2 (offer data and the no-variations decision of 2026-10-07 added; rules otherwise as v1.1). Date 2026-10-07.
+Version 1.3 (sale window of 2026-10-08 added; rules otherwise as v1.2). Date 2026-10-08.
 
 Companion files: `SEO-Rules_Research_Checkpoint.md` (sources and evidence), `seo_check.py` (automatic validator for every rule marked [CHECKED]).
 
@@ -122,7 +122,8 @@ EN US only. ASCII only. No Cyrillic and no accents in any field.
 
 ### 4.6 Offer and price [U, 2026-10-07]
 - Input: **Sale Price 22.99 USD** (default input field `sale_price`). Quantity **1** per SKU. Shipping template **Migrated Template** (the user typed "Mirgrated template"; it is the only valid value of the template). Fulfillment MFN (`Fulfillment by Merchant (Default)`). Dangerous Goods Regulations **Not Applicable**. Item condition New is assumed and flagged.
-- The feed has **separate** fields for the base price (`Your Price USD`) and for `Sale Price USD`; a sale price needs a start and an end date. The user said "считаем от нее" (calculate from it), but gave no formula or dates. Nothing is invented: the other price fields stay empty until one pricing mode is chosen. `python3 agent1_build.py --pricing-mode standard_equals_sale` (base price = 22.99, no promotion), or `--pricing-mode reverse_discount --discount-factor F --sale-start YYYY-MM-DD --sale-end YYYY-MM-DD [--rounding END_99]` (base price = 22.99 / F). The build checks that the base price is above the sale price.
+- **Sale window [U, 2026-10-08]: 2026-10-08 to 2027-05-08** (the user wrote 08.10.2026 to 08.05.2027, day.month.year). The template says the sale price starts to show after 0:00 of the start date. The window is stored in `pricing_input.json`.
+- The feed has **separate** fields for the base price (`Your Price USD`) and for `Sale Price USD`; a sale price needs the start and end dates, which are now set. **The base price is still missing**: the user said "считаем от нее" (calculate from it) but gave no number and no factor. Nothing is invented. Fill `pricing_input.json` (or pass options) with one of: `explicit_standard` plus `standard_price` (a USD number), `reverse_discount` plus `discount_factor` (base price = 22.99 / factor, rounding `2_DECIMALS` or `END_99`). `standard_equals_sale` (base price 22.99, no promotion) would drop the sale window and is not consistent with the dates given. The build checks that the base price is above the sale price and that the end date is not before the start date.
 - `List Price`: the template says to enter 0 if it cannot be provided; 0 is used and flagged. It is not an MSRP. MAP, minimum and maximum price: not set.
 
 ## 5. Product facts (the only facts the AI may use)
@@ -271,7 +272,7 @@ Actions for the user:
 |---|---|
 | A | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru` under the same names |
 | B | Rights decision on the print of q230 (the listing text is already neutral) |
-| C | **Choose the price mode** (section 4.6): base price equal to 22.99, or a discount factor with sale dates. Until then all 130 records are `DATA_REQUIRED` |
+| C | **Give the base price** (section 4.6): a USD number or a discount factor (base = 22.99 / factor). The sale window is set. Until then all 130 records are `DATA_REQUIRED`, with one blocker: `standard_price` |
 | D | After the first sales, replace the estimated demand with the account's own Search Query Performance and Search Term Reports |
 
 Closed: variations not used (standalone listings); quantity 1, shipping template, Dangerous Goods Regulations Not Applicable and the input Sale Price 22.99 USD recorded (2026-10-07); Keyword Sales mismatch (different week, not a different metric); 1000-byte bullets limit and 2000-character description limit confirmed by the user; Item Highlights weight kept as a permanent "Amazon does not say" caveat; AirPods 4 uses the average size, shipped MFN, size numbers only in feed fields; the infographic text "DESIGNED FOR A CLOSE FIT" accepted by the user; q246 lettering renamed "Box Cat Lettering"; package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.

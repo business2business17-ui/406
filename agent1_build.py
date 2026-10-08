@@ -12,6 +12,7 @@ missing in the input and stay DATA_REQUIRED.
 """
 import argparse
 import csv
+import datetime
 import hashlib
 import json
 import os
@@ -31,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.1.0"
-PREVIOUS_RECORD_VERSION = "1.0.0"
+RECORD_VERSION = "1.2.0"
+PREVIOUS_RECORD_VERSION = "1.1.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -126,8 +127,11 @@ def price_block(a):
          "sale_start_date": a.sale_start, "sale_end_date": a.sale_end, "pricing_policy_version": None,
          "formula": None, "raw_result": None, "rounding": None, "missing": [], "status": "PRICE_DATA_REQUIRED"}
     if a.pricing_mode == "standard_equals_sale":
-        p.update(standard_price=money(SALE_PRICE_INPUT), sale_price=None, pricing_policy_version="STANDARD_EQUALS_INPUT_v1",
-                 formula="standard_price = input price; no promotion", rounding="2_DECIMALS")
+        p.update(standard_price=money(SALE_PRICE_INPUT), sale_price=None, sale_start_date=None, sale_end_date=None,
+                 pricing_policy_version="STANDARD_EQUALS_INPUT_v1", formula="standard_price = input price; no promotion", rounding="2_DECIMALS")
+    elif a.pricing_mode == "explicit_standard":
+        p.update(standard_price=money(Decimal(str(a.standard_price))), pricing_policy_version=a.pricing_policy_version or "EXPLICIT_STANDARD_USER",
+                 formula="standard_price given by the user", rounding="2_DECIMALS")
     elif a.pricing_mode == "reverse_discount":
         raw = SALE_PRICE_INPUT / Decimal(str(a.discount_factor))
         if a.rounding == "END_99":
@@ -138,13 +142,22 @@ def price_block(a):
             val = raw
         p.update(standard_price=money(val), pricing_policy_version=a.pricing_policy_version or "REVERSE_DISCOUNT_" + str(a.discount_factor),
                  formula=f"standard_price = sale_price / {a.discount_factor}", raw_result=float(raw), rounding=a.rounding)
-        if not (a.sale_start and a.sale_end):
-            p["missing"] += ["sale_start_date", "sale_end_date"]
     else:
-        p["missing"] += ["standard_price (pricing policy not provided)", "sale_start_date", "sale_end_date"]
+        p["missing"].append("standard_price (pricing policy not provided)")
+    if p["sale_price"] is not None:
+        if not p["sale_start_date"]:
+            p["missing"].append("sale_start_date")
+        if not p["sale_end_date"]:
+            p["missing"].append("sale_end_date")
+        if p["sale_start_date"] and p["sale_end_date"]:
+            d0 = datetime.date.fromisoformat(p["sale_start_date"])
+            d1 = datetime.date.fromisoformat(p["sale_end_date"])
+            if d1 < d0:
+                p["status"] = "PRICE_CONFLICT"
+                p["missing"].append("sale window: end date is before the start date")
     if p["standard_price"] is not None and p["sale_price"] is not None and p["standard_price"] <= p["sale_price"]:
         p["status"] = "PRICE_CONFLICT"
-    elif not p["missing"]:
+    elif not p["missing"] and p["status"] != "PRICE_CONFLICT":
         p["status"] = "PRICE_VALID"
     return p
 
@@ -326,15 +339,25 @@ KEYWORDS = [  # phrase, series, SV, KS last complete week, tier, placement, stat
 
 
 def parse_args():
-    ap = argparse.ArgumentParser(description="Agent 1 build, MOBILIUS AirPods cases, Amazon US")
-    ap.add_argument("--pricing-mode", choices=["unresolved", "standard_equals_sale", "reverse_discount"], default="unresolved",
-                    help="how the other price fields are derived from the input Sale Price 22.99 USD (no mode: nothing is invented)")
-    ap.add_argument("--discount-factor", type=float, default=0.90, help="reverse_discount: standard = sale / factor")
-    ap.add_argument("--rounding", choices=["2_DECIMALS", "END_99"], default="2_DECIMALS")
-    ap.add_argument("--sale-start", default=None, help="YYYY-MM-DD, needed when a sale price is sent")
-    ap.add_argument("--sale-end", default=None, help="YYYY-MM-DD")
+    cfg = {}
+    cfg_path = os.path.join(HERE, "pricing_input.json")
+    if os.path.exists(cfg_path):
+        cfg = json.load(open(cfg_path, encoding="utf-8"))
+    ap = argparse.ArgumentParser(description="Agent 1 build, MOBILIUS AirPods cases, Amazon US. Price inputs come from pricing_input.json; options override it.")
+    ap.add_argument("--pricing-mode", choices=["unresolved", "standard_equals_sale", "reverse_discount", "explicit_standard"],
+                    default=cfg.get("pricing_mode", "unresolved"))
+    ap.add_argument("--discount-factor", type=float, default=cfg.get("discount_factor"), help="reverse_discount: standard = sale / factor")
+    ap.add_argument("--standard-price", type=float, default=cfg.get("standard_price"), help="explicit_standard: base price in USD")
+    ap.add_argument("--rounding", choices=["2_DECIMALS", "END_99"], default=cfg.get("rounding", "2_DECIMALS"))
+    ap.add_argument("--sale-start", default=cfg.get("sale_start_date"), help="YYYY-MM-DD, needed when a sale price is sent")
+    ap.add_argument("--sale-end", default=cfg.get("sale_end_date"), help="YYYY-MM-DD")
     ap.add_argument("--pricing-policy-version", default=None)
-    return ap.parse_args()
+    a = ap.parse_args()
+    if a.pricing_mode == "reverse_discount" and not a.discount_factor:
+        ap.error("reverse_discount needs --discount-factor")
+    if a.pricing_mode == "explicit_standard" and not a.standard_price:
+        ap.error("explicit_standard needs --standard-price")
+    return a
 
 
 def main():
@@ -377,8 +400,9 @@ def main():
             cond_open = sorted(a["attribute"] for a in attrs if a["status"] == "DATA_REQUIRED" and a["required"] != "Required"
                                and a["attribute"] not in price_attrs)
             hard = [f"VALIDATOR: {e}" for e in errs]
-            hard += [("PRICE_DATA_REQUIRED: " if u.startswith(("standard_price", "sale_")) else "REQUIRED_ATTRIBUTE_MISSING: ") + u for u in unresolved]
-            if price["status"] == "PRICE_CONFLICT":
+            hard += [("PRICE_DATA_REQUIRED: " if u.startswith(("standard_price", "sale")) else "REQUIRED_ATTRIBUTE_MISSING: ") + u for u in unresolved]
+            if price["status"] == "PRICE_CONFLICT" and price["standard_price"] is not None and price["sale_price"] is not None \
+                    and price["standard_price"] <= price["sale_price"]:
                 hard.append("PRICE_CONFLICT: standard price is not above the sale price")
             warnings = [f"VALIDATOR: {w}" for w in warns]
             warnings += ["CONDITIONAL_ATTRIBUTE_NOT_DETERMINED: " + c for c in cond_open]

@@ -1,0 +1,5 @@
+field,old,new,records_changed
+catalog.sale_end_date,"[null, ""DATA_REQUIRED""]","[""2027-05-08"", ""VALID""]",130
+catalog.sale_start_date,"[null, ""DATA_REQUIRED""]","[""2026-10-08"", ""VALID""]",130
+pricing.sale_end_date,null,"""2027-05-08""",130
+pricing.sale_start_date,null,"""2026-10-08""",130

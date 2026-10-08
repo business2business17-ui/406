@@ -10,12 +10,10 @@ Total SKUs: 130 (65 Pro, 65 AirPods 4/5), marketplace US
 - POLICY_RISK: 0
 - PRICE_CONFLICT: 0
 
-Pricing: input Sale Price 22.99 USD; mode unresolved; price status PRICE_DATA_REQUIRED; missing: standard_price (pricing policy not provided), sale_start_date, sale_end_date
+Pricing: input Sale Price 22.99 USD; mode unresolved; price status PRICE_DATA_REQUIRED; missing: standard_price (pricing policy not provided)
 Quantity 1, shipping template 'Migrated Template', Dangerous Goods Regulations 'Not Applicable' (user, 2026-10-07).
 Variations: not used (user decision); every SKU is a standalone listing.
 Note: 65 standalone listings per series share the same keyword set and compete for the same phrases (cannibalization).
 
 Hard blockers (count of records):
-- PRICE_DATA_REQUIRED:sale_end_date: 130
-- PRICE_DATA_REQUIRED:sale_start_date: 130
 - PRICE_DATA_REQUIRED:standard_price: 130
