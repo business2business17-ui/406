@@ -113,8 +113,8 @@ def build_row(rec, series_theme=None):
     put("EX", p.get("minimum_seller_allowed_price"), "pricing.minimum_seller_allowed_price", "POLICY_V3_MIN_SALE_MINUS_4PCT")
     put("EY", p.get("maximum_seller_allowed_price"), "pricing.maximum_seller_allowed_price", "POLICY_V3_MAX_SALE_PLUS_20PCT")
     # user instruction 2026-10-08: the same min/max also for the Amazon Business (B2B) audience (policy v3 alone leaves them empty)
-    put("FF", p.get("minimum_seller_allowed_price"), "pricing.minimum_seller_allowed_price", "USER_OVERRIDE_B2B_MIN")
-    put("FG", p.get("maximum_seller_allowed_price"), "pricing.maximum_seller_allowed_price", "USER_OVERRIDE_B2B_MAX")
+    put("FF", p.get("b2b_minimum_seller_allowed_price"), "pricing.b2b_minimum_seller_allowed_price", "USER_DECISION_B2B_MIN")
+    put("FG", p.get("b2b_maximum_seller_allowed_price"), "pricing.b2b_maximum_seller_allowed_price", "USER_DECISION_B2B_MAX_BUSINESS_PLUS_20PCT")
     # USER_OVERRIDE_RULEs 2026-10-08 (decisions 1-3): Special Features = Flexible + Lightweight; Included Components = Handle (user, 2026-10-08); warranty text as given
     put("AK", "Flexible", "USER_OVERRIDE_RULE.special_features", "USER_DECISION")
     put("AL", "Lightweight", "USER_OVERRIDE_RULE.special_features", "USER_DECISION")

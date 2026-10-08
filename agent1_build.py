@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.8.0"
-PREVIOUS_RECORD_VERSION = "1.7.0"
+RECORD_VERSION = "1.9.0"
+PREVIOUS_RECORD_VERSION = "1.8.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -174,7 +174,12 @@ def derive_extra_prices(p, policy):
         if min_rule and min_rule.get("base") == "quantity_tier":  # minimum = resulting unit price of the named tier
             hit = [t for t in out if t["lower_bound"] == min_rule["lower_bound"]]
             p["minimum_seller_allowed_price"] = hit[0]["resulting_unit_price"] if hit else None
-    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds", "quantity_tier_base") if policy.get(k)}
+    # B2B guardrails (explicit user decision 2026-10-08): min = same as the 4-pc tier price, max = rule on the Business Price
+    if policy.get("b2b_min_price_rule") == "same_as_min":
+        p["b2b_minimum_seller_allowed_price"] = p.get("minimum_seller_allowed_price")
+    if policy.get("b2b_max_price_rule") and p.get("business_price") is not None:
+        p["b2b_maximum_seller_allowed_price"] = apply_rule(policy["b2b_max_price_rule"], p, sale_ref)
+    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds", "quantity_tier_base", "b2b_min_price_rule", "b2b_max_price_rule") if policy.get(k)}
     # order checks: min <= sale <= standard <= max; tier prices strictly decreasing and not below the minimum price
     msgs = []
     std = p["standard_price"]
@@ -479,7 +484,7 @@ def parse_args():
     ap.add_argument("--sale-end", default=cfg.get("sale_end_date"), help="YYYY-MM-DD")
     ap.add_argument("--pricing-policy-version", default=cfg.get("pricing_policy_version"))
     a = ap.parse_args()
-    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds", "quantity_tier_base") if cfg.get(k)}
+    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds", "quantity_tier_base", "b2b_min_price_rule", "b2b_max_price_rule") if cfg.get(k)}
     if a.pricing_mode == "reverse_discount" and not a.discount_factor:
         ap.error("reverse_discount needs --discount-factor")
     if a.pricing_mode == "explicit_standard" and not a.standard_price:

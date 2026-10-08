@@ -62,6 +62,8 @@
           "discount_pct_of_business_price": 4
         }
       ],
+      "b2b_minimum_seller_allowed_price": 19.86,
+      "b2b_maximum_seller_allowed_price": 24.83,
       "policy_rules": {
         "min_price_rule": {
           "base": "quantity_tier",
@@ -88,7 +90,13 @@
             "discount_pct": 4
           }
         ],
-        "quantity_tier_base": "business_price"
+        "quantity_tier_base": "business_price",
+        "b2b_min_price_rule": "same_as_min",
+        "b2b_max_price_rule": {
+          "base": "business_price",
+          "op": "markup_pct",
+          "value": 20
+        }
       },
       "price_input_type": "sale_price",
       "pricing_basis": "SALE",
@@ -189,6 +197,8 @@
           "discount_pct_of_business_price": 4
         }
       ],
+      "b2b_minimum_seller_allowed_price": 19.86,
+      "b2b_maximum_seller_allowed_price": 24.83,
       "policy_rules": {
         "min_price_rule": {
           "base": "quantity_tier",
@@ -215,7 +225,13 @@
             "discount_pct": 4
           }
         ],
-        "quantity_tier_base": "business_price"
+        "quantity_tier_base": "business_price",
+        "b2b_min_price_rule": "same_as_min",
+        "b2b_max_price_rule": {
+          "base": "business_price",
+          "op": "markup_pct",
+          "value": 20
+        }
       },
       "price_input_type": "sale_price",
       "pricing_basis": "SALE",

@@ -8,7 +8,7 @@
   "discount_factor": 0.9,
   "standard_price": null,
   "rounding": "2_DECIMALS",
-  "note": "Policy v3 with explicit user overrides (2026-10-08): quantity tiers (B2B, Fixed) are taken from the Business Price, not the Sale Price, because tier prices must be below the Business Price: 2 pcs = Business -2%, 4 pcs = Business -4%. Min allowed price = price of the 4-pc tier (answer 'Min. 4 штуки'); max = Sale +20% (confirmed); min/max for audience ALL only, B2B min/max empty.",
+  "note": "Policy v3 with explicit user overrides (2026-10-08): quantity tiers (B2B, Fixed) are taken from the Business Price, not the Sale Price, because tier prices must be below the Business Price: 2 pcs = Business -2%, 4 pcs = Business -4%. Min allowed price = price of the 4-pc tier (answer 'Min. 4 штуки'); max = Sale +20% (confirmed); min/max for audience ALL only, B2B min/max empty. B2B guardrails (user, option A): min = 19.86 (4-pc tier price), max = Business +20% = 24.83.",
   "pricing_policy_version": "2026-10-08-v3",
   "min_price_rule": {
     "base": "quantity_tier",
@@ -35,5 +35,11 @@
       "discount_pct": 4
     }
   ],
-  "quantity_tier_base": "business_price"
+  "quantity_tier_base": "business_price",
+  "b2b_min_price_rule": "same_as_min",
+  "b2b_max_price_rule": {
+    "base": "business_price",
+    "op": "markup_pct",
+    "value": 20
+  }
 }
