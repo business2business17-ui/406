@@ -1,0 +1,67 @@
+{
+ "feed_filename": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_002.xlsm",
+ "file_status": "READY_FOR_AMAZON_UPLOAD",
+ "marketplace": "US",
+ "product_type": "PORTABLE_ELECTRONIC_DEVICE_COVER",
+ "batch_id": "US-AIRPODS-20261007-001",
+ "part_number": 2,
+ "sku_count": 130,
+ "operation_counts": {
+  "CREATE": 130
+ },
+ "blocked_count": 0,
+ "generated_at": "2026-10-08T08:29:12.797755Z",
+ "agent2_version": "1.0.0",
+ "handoff_schema_version": "1.0.0",
+ "agent1_record_version": "1.7.0",
+ "pricing_policy_version": "2026-10-08-v3",
+ "template": {
+  "path": "agent2/templates/raw/PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm",
+  "sha256": "0a2eb7bfca9cd11ae3b64a73df29f4ccd61987e7abc49d745b064a2b3c454a67",
+  "file_type": "xlsm",
+  "language": "en_US",
+  "marketplace": "ATVPDKIKX0DER",
+  "template_identifier": "c4d29a68-3639-4614-9cee-9bff9c3e60ca",
+  "generated": "2026-10-08T08:26:56Z",
+  "status": "TEMPLATE_NEW_VERSION vs 'Feed AirPods Cases.xlsm' (column schema identical, 316 columns; dropdown changes: Brand now MOBILIUS, Item Type Keyword path, compatible headphone models list +2, requirement rules changed)"
+ },
+ "identifier_mode": "GTIN_EXEMPT (user, 2026-10-08; approved for MOBILIUS earlier)",
+ "execution_mode": "HYBRID (USER_UPLOAD template + GITHUB repo branch claude/clever-albattani-5szkv4)",
+ "feed_sha256": "55dd0cb6635483d6ec941cedb3aab1c92a9e734342966796f3915ab70a48b74c",
+ "agent1_sources": {
+  "jsonl": "output/jsonl/handoff_US_batch001.jsonl",
+  "jsonl_sha256": "f9d9328192c659adf0c365d6283ccf6e69adedb3ff22675a0bb823b01aa4add9"
+ },
+ "supersedes": "..._001.xlsm (built on the previous template)",
+ "audit": {
+  "zip_ok": true,
+  "non_template_parts_identical": true,
+  "sheet_names_same": true,
+  "sheet_states_same": true,
+  "rows1_6_identical": true,
+  "row_alignment_mismatch": 0,
+  "minimum_field_failures": 0,
+  "sku_unique": true,
+  "rows_written": 130,
+  "formula_cells_in_data": 0,
+  "text_roundtrip_bad": 0,
+  "issues": 0,
+  "price_tuples": [
+   [
+    25.54,
+    22.99,
+    20.69,
+    22.07,
+    27.59,
+    22.53,
+    22.07,
+    130
+   ]
+  ],
+  "pro_photo5_present": 0,
+  "AirPods_Pro_3rd_used": 0,
+  "final_audit": "PASS",
+  "macro_parts_identical_to_template": true,
+  "macro_note": "the supplied template contains no vbaProject part (only the macro-enabled content type); nothing to lose, content types identical"
+ }
+}

@@ -15,7 +15,9 @@
   "airpods4_size": "average",
   "q230": "accepted"
  },
- "feed_sha256": "d7c8f7f98018e023c4a32e41c8d6f002025758deb4ad69d028f0455807cbd120",
- "template_sha256": "fd50ed0b704aec515949892007f17c45d060f59201ad24c753033b0b1259f925",
- "note": "Amazon's own acceptance is only known after upload."
+ "feed_sha256": "55dd0cb6635483d6ec941cedb3aab1c92a9e734342966796f3915ab70a48b74c",
+ "template_sha256": "0a2eb7bfca9cd11ae3b64a73df29f4ccd61987e7abc49d745b064a2b3c454a67",
+ "note": "Amazon's own acceptance is only known after upload.",
+ "feed": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_002.xlsm",
+ "identifier_mode": "GTIN Exempt"
 }

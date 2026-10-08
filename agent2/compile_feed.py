@@ -9,7 +9,7 @@ import feed_mapping as fm
 from template_rules import TemplateRules
 
 ROOT = os.path.dirname(fm.HERE)
-TPL = os.path.join(ROOT, "Feed AirPods Cases.xlsm")
+TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
 NUMERIC = {"EX", "EY", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
@@ -52,6 +52,10 @@ def main():
             ph = [u for u in ph if not u.endswith("_5.jpg")]
         rec["photos"] = ph
         v, pv = fm.build_row(rec)
+        # Item Type Keyword: the exact string offered by THIS template's dropdown (it differs between template versions)
+        itk = dl.by_col.get("L") or []
+        assert len(itk) == 1 and "headphone-cases" in itk[0], itk
+        v["L"] = itk[0]; pv["L"] = ("catalog.item_type_keyword.value", "ENUM_MAPPED")
         for col, val in v.items():
             if col not in SKIP_ENUM and dl.by_col.get(col) is not None and str(val) not in [str(x) for x in dl.by_col[col]]:
                 issues.append({"sku": rec["sku"], "row": r, "col": col, "code": "ENUM_INVALID", "value": str(val)})
@@ -71,7 +75,7 @@ def main():
     sheet = sheet.replace("</sheetData>", xml_rows + "</sheetData>", 1)
     sheet = re.sub(r'<dimension ref="A1:LD6"/>', f'<dimension ref="A1:LD{6 + len(rows)}"/>', sheet, 1)
     os.makedirs(OUT, exist_ok=True)
-    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_001.xlsm"
+    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_002.xlsm"
     path = os.path.join(OUT, name)
     with zipfile.ZipFile(path, "w") as zo:
         for info in z.infolist():

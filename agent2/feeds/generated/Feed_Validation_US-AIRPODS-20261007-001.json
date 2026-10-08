@@ -1,0 +1,35 @@
+{
+ "file_status": "READY_FOR_AMAZON_UPLOAD",
+ "audit": {
+  "zip_ok": true,
+  "non_template_parts_identical": true,
+  "sheet_names_same": true,
+  "sheet_states_same": true,
+  "rows1_6_identical": true,
+  "row_alignment_mismatch": 0,
+  "minimum_field_failures": 0,
+  "sku_unique": true,
+  "rows_written": 130,
+  "formula_cells_in_data": 0,
+  "text_roundtrip_bad": 0,
+  "issues": 0,
+  "price_tuples": [
+   [
+    25.54,
+    22.99,
+    20.69,
+    22.07,
+    27.59,
+    22.53,
+    22.07,
+    130
+   ]
+  ],
+  "pro_photo5_present": 0,
+  "AirPods_Pro_3rd_used": 0,
+  "final_audit": "PASS",
+  "macro_parts_identical_to_template": true,
+  "macro_note": "the supplied template contains no vbaProject part (only the macro-enabled content type); nothing to lose, content types identical"
+ },
+ "issues": []
+}
