@@ -36,16 +36,73 @@
       "map_price": null,
       "minimum_seller_allowed_price": null,
       "maximum_seller_allowed_price": null,
-      "business_price": null,
+      "business_price": 20.69,
       "sale_start_date": "2026-10-08",
       "sale_end_date": "2027-05-08",
-      "pricing_policy_version": "SKILL_REVERSE_DISCOUNT_0.90_v1",
+      "pricing_policy_version": "2026-10-08-v2",
       "formula": "standard_price = sale_price / 0.9",
       "raw_result": 25.544444444444444,
       "rounding": "2_DECIMALS",
       "missing": [],
       "status": "PRICE_VALID",
-      "check_standard_times_factor": 22.99
+      "check_standard_times_factor": 22.99,
+      "quantity_tier_thresholds": [
+        2,
+        3,
+        4
+      ],
+      "quantity_tiers_status": "RATES_NOT_APPROVED",
+      "policy_rules": {
+        "business_price_rule": {
+          "base": "sale_price",
+          "op": "discount_pct",
+          "value": 10
+        },
+        "quantity_tier_thresholds": [
+          2,
+          3,
+          4
+        ]
+      },
+      "price_input_type": "sale_price",
+      "pricing_basis": "SALE",
+      "business_discount_rate": 0.1,
+      "business_price_basis": "SALE",
+      "business_price_status": "CALCULATED",
+      "pricing_calculations": [
+        {
+          "field": "sale_price",
+          "input": 22.99,
+          "formula": "preserved unchanged",
+          "rounded": 22.99
+        },
+        {
+          "field": "standard_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v2",
+          "formula": "standard_price = sale_price / 0.9",
+          "unrounded": 25.544444444444444,
+          "rounded": 25.54,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        },
+        {
+          "field": "business_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v2",
+          "formula": "business_price = sale_price x (1 - 0.1)",
+          "unrounded": 20.691,
+          "rounded": 20.69,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        },
+        {
+          "field": "minimum_seller_allowed_price",
+          "status": "NOT_APPROVED: needs its own guardrail policy"
+        },
+        {
+          "field": "maximum_seller_allowed_price",
+          "status": "NOT_APPROVED: needs its own guardrail policy"
+        }
+      ]
     },
     "quantity": 1,
     "shipping_template": "Migrated Template",
@@ -88,16 +145,73 @@
       "map_price": null,
       "minimum_seller_allowed_price": null,
       "maximum_seller_allowed_price": null,
-      "business_price": null,
+      "business_price": 20.69,
       "sale_start_date": "2026-10-08",
       "sale_end_date": "2027-05-08",
-      "pricing_policy_version": "SKILL_REVERSE_DISCOUNT_0.90_v1",
+      "pricing_policy_version": "2026-10-08-v2",
       "formula": "standard_price = sale_price / 0.9",
       "raw_result": 25.544444444444444,
       "rounding": "2_DECIMALS",
       "missing": [],
       "status": "PRICE_VALID",
-      "check_standard_times_factor": 22.99
+      "check_standard_times_factor": 22.99,
+      "quantity_tier_thresholds": [
+        2,
+        3,
+        4
+      ],
+      "quantity_tiers_status": "RATES_NOT_APPROVED",
+      "policy_rules": {
+        "business_price_rule": {
+          "base": "sale_price",
+          "op": "discount_pct",
+          "value": 10
+        },
+        "quantity_tier_thresholds": [
+          2,
+          3,
+          4
+        ]
+      },
+      "price_input_type": "sale_price",
+      "pricing_basis": "SALE",
+      "business_discount_rate": 0.1,
+      "business_price_basis": "SALE",
+      "business_price_status": "CALCULATED",
+      "pricing_calculations": [
+        {
+          "field": "sale_price",
+          "input": 22.99,
+          "formula": "preserved unchanged",
+          "rounded": 22.99
+        },
+        {
+          "field": "standard_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v2",
+          "formula": "standard_price = sale_price / 0.9",
+          "unrounded": 25.544444444444444,
+          "rounded": 25.54,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        },
+        {
+          "field": "business_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v2",
+          "formula": "business_price = sale_price x (1 - 0.1)",
+          "unrounded": 20.691,
+          "rounded": 20.69,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        },
+        {
+          "field": "minimum_seller_allowed_price",
+          "status": "NOT_APPROVED: needs its own guardrail policy"
+        },
+        {
+          "field": "maximum_seller_allowed_price",
+          "status": "NOT_APPROVED: needs its own guardrail policy"
+        }
+      ]
     },
     "quantity": 1,
     "shipping_template": "Migrated Template",

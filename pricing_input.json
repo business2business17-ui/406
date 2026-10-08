@@ -8,11 +8,20 @@
   "discount_factor": 0.9,
   "standard_price": null,
   "rounding": "2_DECIMALS",
-  "note": "Sale Price 22.99 USD and the sale window 2026-10-08 to 2027-05-08 are user input. On 2026-10-08 the user said: calculate all other prices per the skill. The only numeric rule in the amazon-product-intelligence skill is the reverse-discount example Sale = Standard x 0.90, so Standard = Sale / 0.90, rounded to 2 decimals (no psychological rounding). List Price, MAP, min/max allowed price, business and quantity prices are NOT derived: the skill forbids deriving them without a configured policy. Change discount_factor to change the base price.",
-  "pricing_policy_version": "SKILL_REVERSE_DISCOUNT_0.90_v1",
+  "note": "Policy: AMAZON_SHARED_PRICING_AND_UPDATES.md version 2026-10-08-v2 (approved by the user). Sale Price 22.99 USD is the input (price_input_type=sale_price). Standard (Your) Price = Sale / (1 - 0.10), ROUND_HALF_UP. Business Price = Sale x (1 - 0.10) from the SALE basis, never from Standard. Sale window 2026-10-08 to 2027-05-08 given by the user. Quantity tiers: the user gave thresholds 2, 3 and 4 units besides the business price; the policy says tier rates and min/max guardrails need their own approved policy, so they are not filled. Add quantity_price_type and quantity_tiers (with values) to fill them.",
+  "pricing_policy_version": "2026-10-08-v2",
   "min_price_rule": null,
   "max_price_rule": null,
-  "business_price_rule": null,
+  "business_price_rule": {
+    "base": "sale_price",
+    "op": "discount_pct",
+    "value": 10
+  },
   "quantity_price_type": null,
-  "quantity_tiers": null
+  "quantity_tiers": null,
+  "quantity_tier_thresholds": [
+    2,
+    3,
+    4
+  ]
 }

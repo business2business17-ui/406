@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.3.0"
-PREVIOUS_RECORD_VERSION = "1.2.0"
+RECORD_VERSION = "1.4.0"
+PREVIOUS_RECORD_VERSION = "1.3.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -148,6 +148,10 @@ def derive_extra_prices(p, policy):
         p["maximum_seller_allowed_price"] = apply_rule(policy["max_price_rule"], p, sale_ref)
     if policy.get("business_price_rule"):
         p["business_price"] = apply_rule(policy["business_price_rule"], p, sale_ref)
+    thresholds = policy.get("quantity_tier_thresholds") or []
+    if thresholds and not policy.get("quantity_tiers"):
+        p["quantity_tier_thresholds"] = thresholds
+        p["quantity_tiers_status"] = "RATES_NOT_APPROVED"
     tiers = policy.get("quantity_tiers") or []
     if tiers:
         p["quantity_price_type"] = policy.get("quantity_price_type", "Percent")
@@ -160,7 +164,7 @@ def derive_extra_prices(p, policy):
             else:
                 out.append({"lower_bound": t["lower_bound"], "fixed_price": t["value"], "resulting_unit_price": t["value"]})
         p["quantity_tiers"] = out
-    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers") if policy.get(k)}
+    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds") if policy.get(k)}
     # order checks: min <= sale <= standard <= max; tier prices strictly decreasing and not below the minimum price
     msgs = []
     std = p["standard_price"]
@@ -171,6 +175,8 @@ def derive_extra_prices(p, policy):
     if p["minimum_seller_allowed_price"] is not None and p["maximum_seller_allowed_price"] is not None \
             and p["minimum_seller_allowed_price"] > p["maximum_seller_allowed_price"]:
         msgs.append("minimum allowed price is above the maximum allowed price")
+    if p["business_price"] is not None and p["business_price"] > sale_ref:
+        msgs.append("business price is above the sale price (policy: business_price <= sale_price < standard_price)")
     if p["business_price"] is not None and std is not None and p["business_price"] > std:
         msgs.append("business price is above the standard price")
     last = p["business_price"] if p["business_price"] is not None else None
@@ -235,6 +241,29 @@ def price_block(a):
         p["status"] = "PRICE_VALID"
     if p["status"] == "PRICE_VALID":
         derive_extra_prices(p, a.policy)
+    # shared policy 2026-10-08-v2: handoff fields and the calculation audit
+    p["price_input_type"] = "sale_price"
+    p["pricing_basis"] = "SALE"
+    if a.policy.get("business_price_rule"):
+        r_ = a.policy["business_price_rule"]
+        p["business_discount_rate"] = r_["value"] / 100
+        p["business_price_basis"] = "SALE" if r_["base"] == "sale_price" else r_["base"].upper()
+        p["business_price_status"] = "CALCULATED" if p["business_price"] is not None else "NOT_CALCULATED"
+    else:
+        p["business_price_status"] = "NOT_APPROVED"
+    audit = [{"field": "sale_price", "input": float(SALE_PRICE_INPUT), "formula": "preserved unchanged", "rounded": p["input_value"]}]
+    if p["standard_price"] is not None and p.get("raw_result") is not None:
+        audit.append({"field": "standard_price", "input": p["input_value"], "policy": p["pricing_policy_version"], "formula": p["formula"],
+                      "unrounded": p["raw_result"], "rounded": p["standard_price"], "rounding": "ROUND_HALF_UP to 0.01"})
+    if p["business_price"] is not None:
+        audit.append({"field": "business_price", "input": p["input_value"], "policy": p["pricing_policy_version"],
+                      "formula": "business_price = sale_price x (1 - %s)" % (p["business_discount_rate"]),
+                      "unrounded": float(Decimal(str(p["input_value"])) * (Decimal(1) - Decimal(str(p["business_discount_rate"])))),
+                      "rounded": p["business_price"], "rounding": "ROUND_HALF_UP to 0.01"})
+    for fld in ("minimum_seller_allowed_price", "maximum_seller_allowed_price"):
+        if p[fld] is None:
+            audit.append({"field": fld, "status": "NOT_APPROVED: needs its own guardrail policy"})
+    p["pricing_calculations"] = audit
     return p
 
 
@@ -350,6 +379,9 @@ def attributes(key, row, content, price):
                     ("business_price", price["business_price"])):
         if val is not None:
             add(nm, val, "Optional", "CALCULATED", "HIGH", "VALID", "from the configured pricing policy " + str(price["pricing_policy_version"]))
+    if price.get("quantity_tiers_status") == "RATES_NOT_APPROVED":
+        add("quantity_tier_thresholds", ", ".join(str(x) for x in price["quantity_tier_thresholds"]) + " units", "Optional", "USER_INPUT", "HIGH", "WARNING",
+            "thresholds given by the user; tier rates are not approved (policy 2026-10-08-v2), so no quantity discount is sent")
     for t in price.get("quantity_tiers", []):
         add(f"quantity_tier_{t['lower_bound']}", json.dumps(t), "Optional", "CALCULATED", "HIGH", "VALID", "quantity price type " + str(price.get("quantity_price_type")))
     return A
@@ -435,7 +467,7 @@ def parse_args():
     ap.add_argument("--sale-end", default=cfg.get("sale_end_date"), help="YYYY-MM-DD")
     ap.add_argument("--pricing-policy-version", default=cfg.get("pricing_policy_version"))
     a = ap.parse_args()
-    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers") if cfg.get(k)}
+    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds") if cfg.get(k)}
     if a.pricing_mode == "reverse_discount" and not a.discount_factor:
         ap.error("reverse_discount needs --discount-factor")
     if a.pricing_mode == "explicit_standard" and not a.standard_price:
@@ -495,6 +527,8 @@ def main():
                 warnings.append("THEME_REVIEW: no clear valid value for this print")
             if q not in VERIFIED_IMAGE_MATCH:
                 warnings.append("IMAGE_SKU_MATCH_MEDIUM: thumbnail viewed, not itemized")
+            if price.get("quantity_tiers_status") == "RATES_NOT_APPROVED":
+                warnings.append("QUANTITY_TIERS_PENDING: thresholds " + ", ".join(str(x) for x in price["quantity_tier_thresholds"]) + " units given; discount rates need an approved tier policy")
             if q == "q230":
                 warnings.append("POLICY_RISK_REVIEW: print resembles a known character; rights decision with the user")
             if errs:
@@ -570,12 +604,15 @@ def main():
                                        content["title"], row["model"], "PORTABLE_ELECTRONIC_DEVICE_COVER", MARKETPLACE, "China", status])
             sheets["Content"].append([row["sku"], MARKETPLACE, LANGUAGE, content["title"], content["item_highlights"], *content["bullet_points"],
                                       content["description"], content["backend_search_terms"], content["backend_bytes"]])
+            if price.get("quantity_tiers"):
+                tier_cells = [f"{t['lower_bound']}+ units: " + (f"{t['discount_pct']}% off = {t['resulting_unit_price']}" if "discount_pct" in t else f"{t['fixed_price']}")
+                              for t in price["quantity_tiers"]][:4]
+            else:
+                tier_cells = [f"{x}+ units: rate not approved" for x in price.get("quantity_tier_thresholds", [])][:4]
+            tier_cells += [None] * (4 - len(tier_cells))
             sheets["Pricing"].append([row["sku"], MARKETPLACE, CURRENCY, price["sale_price"], price["standard_price"], price["list_price"],
                                       price["map_price"], price["minimum_seller_allowed_price"], price["maximum_seller_allowed_price"],
-                                      price["business_price"]] + [
-                                          (f"{t['lower_bound']}+ units: " + (f"{t['discount_pct']}% off = {t['resulting_unit_price']}" if "discount_pct" in t else f"{t['fixed_price']}"))
-                                          for t in price.get("quantity_tiers", [])][:4] + [None] * (4 - len(price.get("quantity_tiers", [])[:4]))
-                                      + [price["pricing_policy_version"], price["status"]])
+                                      price["business_price"]] + tier_cells + [price["pricing_policy_version"], price["status"]])
             for a in attrs:
                 sheets["Attributes"].append([row["sku"], a["attribute"], a["value"], a["source"], a["confidence"], a["required"], a["status"], a["note"]])
                 sheets["Audit"].append([row["sku"], a["attribute"], a["value"], a["source"], VERSIONS["product_data_version"], a["confidence"], a["status"], GENERATED_AT])
