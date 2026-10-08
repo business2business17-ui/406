@@ -8,11 +8,12 @@
   "discount_factor": 0.9,
   "standard_price": null,
   "rounding": "2_DECIMALS",
-  "note": "Policy: AMAZON_SHARED_PRICING_AND_UPDATES.md version 2026-10-08-v2. Sale Price 22.99 USD (input); Standard = Sale/(1-0.10); Business = Sale x (1-0.10) from the SALE basis. Quantity tiers approved by the user on 2026-10-08: price type Fixed, 2 units = business price minus 2%, 4 units = business price minus 4%, each written as a fixed unit price (ROUND_HALF_UP to 0.01). Min/max allowed price: no approved guardrail policy, not filled.",
-  "pricing_policy_version": "2026-10-08-v2",
+  "note": "Policy v3 (2026-10-08-v3). Sale Price 22.99 USD (input); Standard = Sale/(1-0.10); Business = Sale x (1-0.10). User percents given 2026-10-08: min = 4% below Sale (answer 'Min. 4 штуки', equals the 4-pc tier price), max = 20% above Sale (confirmed); min/max for audience ALL only, B2B min/max empty. Quantity tiers (B2B, Fixed): 2 pcs = Sale -2%, 4 pcs = Sale -4%, taken from the Sale Price.",
+  "pricing_policy_version": "2026-10-08-v3",
   "min_price_rule": {
-    "base": "quantity_tier",
-    "lower_bound": 4
+    "base": "sale_price",
+    "op": "discount_pct",
+    "value": 4
   },
   "max_price_rule": {
     "base": "sale_price",

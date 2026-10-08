@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.6.0"
-PREVIOUS_RECORD_VERSION = "1.5.0"
+RECORD_VERSION = "1.7.0"
+PREVIOUS_RECORD_VERSION = "1.6.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -157,7 +157,7 @@ def derive_extra_prices(p, policy):
     if tiers:
         p["quantity_price_type"] = policy.get("quantity_price_type", "Percent")
         out = []
-        base = p["business_price"] if p["business_price"] is not None else p["standard_price"]
+        base = sale_ref  # policy v3: quantity prices are taken from the Sale Price
         for t in tiers:
             pct = t.get("discount_pct", t.get("value") if p["quantity_price_type"] == "Percent" else None)
             price = money(Decimal(str(base)) * (Decimal(100) - Decimal(str(pct))) / Decimal(100)) if (base is not None and pct is not None) else t.get("value")
@@ -166,7 +166,7 @@ def derive_extra_prices(p, policy):
             else:
                 e = {"lower_bound": t["lower_bound"], "fixed_price": price, "resulting_unit_price": price}
                 if pct is not None:
-                    e["discount_pct_of_business_price"] = pct
+                    e["discount_pct_of_sale_price"] = pct
                 out.append(e)
         p["quantity_tiers"] = out
         if min_rule and min_rule.get("base") == "quantity_tier":  # minimum = resulting unit price of the named tier
@@ -195,7 +195,9 @@ def derive_extra_prices(p, policy):
         up = t["resulting_unit_price"]
         if up is None:
             continue
-        if last is not None and up >= last:
+        if p["business_price"] is not None and up > p["business_price"]:
+            p.setdefault("price_warnings", []).append(f"QUANTITY_TIER_{t['lower_bound']}_ABOVE_BUSINESS_PRICE")
+        if last is not None and last != p["business_price"] and up >= last:
             msgs.append(f"quantity tier {t['lower_bound']} price {up} is not below the previous level {last}")
         if p["minimum_seller_allowed_price"] is not None and up < p["minimum_seller_allowed_price"]:
             msgs.append(f"quantity tier {t['lower_bound']} price {up} is below the minimum allowed price")
@@ -531,6 +533,7 @@ def main():
                 hard.append("PRICE_CONFLICT: standard price is not above the sale price")
             warnings = [f"VALIDATOR: {w}" for w in warns]
             warnings += ["CONDITIONAL_ATTRIBUTE_NOT_DETERMINED: " + c for c in cond_open]
+            warnings += [w_ + ": B2B quantity price is above the Business Price; confirm with the user" for w_ in price.get("price_warnings", [])]
             if not THEME[q]:
                 warnings.append("THEME_REVIEW: no clear valid value for this print")
             if q not in VERIFIED_IMAGE_MATCH:
@@ -613,7 +616,7 @@ def main():
             sheets["Content"].append([row["sku"], MARKETPLACE, LANGUAGE, content["title"], content["item_highlights"], *content["bullet_points"],
                                       content["description"], content["backend_search_terms"], content["backend_bytes"]])
             if price.get("quantity_tiers"):
-                tier_cells = [f"{t['lower_bound']}+ units: " + (f"fixed {t['fixed_price']}" + (f" ({t['discount_pct_of_business_price']}% off business price)" if "discount_pct_of_business_price" in t else "")
+                tier_cells = [f"{t['lower_bound']}+ units: " + (f"fixed {t['fixed_price']}" + (f" ({t['discount_pct_of_sale_price']}% off sale price)" if "discount_pct_of_sale_price" in t else "")
                                                                if "fixed_price" in t else f"{t['discount_pct']}% off = {t['resulting_unit_price']}")
                               for t in price["quantity_tiers"]][:4]
             else:

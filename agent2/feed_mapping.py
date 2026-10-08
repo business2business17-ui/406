@@ -99,21 +99,19 @@ def build_row(rec, series_theme=None):
     put("DS", p["list_price"], "pricing.list_price", "TEMPLATE_RULE_ZERO_IF_UNKNOWN")
     put("EQ", cat["fulfillment_channel_code"]["value"], "catalog.fulfillment_channel_code.value")
     put("ER", cat["quantity"]["value"], "catalog.quantity.value")
-    put("EV", p["standard_price"], "pricing.standard_price", "POLICY_2026-10-08-v2")
-    put("EZ", p["sale_price"], "pricing.sale_price", "POLICY_2026-10-08-v2")
+    put("EV", p["standard_price"], "pricing.standard_price", "POLICY_2026-10-08-v3")
+    put("EZ", p["sale_price"], "pricing.sale_price", "POLICY_2026-10-08-v3")
     put("FA", p["sale_start_date"], "pricing.sale_start_date")
     put("FB", p["sale_end_date"], "pricing.sale_end_date")
-    put("FE", p["business_price"], "pricing.business_price", "POLICY_2026-10-08-v2")
+    put("FE", p["business_price"], "pricing.business_price", "POLICY_2026-10-08-v3")
     tiers = p.get("quantity_tiers") or []
     if tiers:
         put("FJ", p["quantity_price_type"], "pricing.quantity_price_type", "ENUM_MAPPED")
         for (cth, cpr), t in zip([("FK", "FL"), ("FM", "FN"), ("FO", "FP"), ("FQ", "FR"), ("FS", "FT")], tiers):
             put(cth, t["lower_bound"], "pricing.quantity_tiers.lower_bound")
-            put(cpr, t["fixed_price"] if p["quantity_price_type"] == "Fixed" else t["discount_pct"], "pricing.quantity_tiers", "POLICY_2026-10-08-v2")
-    put("EX", p.get("minimum_seller_allowed_price"), "pricing.minimum_seller_allowed_price", "USER_RULE_MIN_EQ_4PC_TIER")
-    put("EY", p.get("maximum_seller_allowed_price"), "pricing.maximum_seller_allowed_price", "USER_RULE_MAX_SALE_PLUS_20PCT")
-    put("FF", p.get("minimum_seller_allowed_price"), "pricing.minimum_seller_allowed_price", "USER_RULE_MIN_EQ_4PC_TIER")
-    put("FG", p.get("maximum_seller_allowed_price"), "pricing.maximum_seller_allowed_price", "USER_RULE_MAX_SALE_PLUS_20PCT")
+            put(cpr, t["fixed_price"] if p["quantity_price_type"] == "Fixed" else t["discount_pct"], "pricing.quantity_tiers", "POLICY_2026-10-08-v3")
+    put("EX", p.get("minimum_seller_allowed_price"), "pricing.minimum_seller_allowed_price", "POLICY_V3_MIN_SALE_MINUS_4PCT")
+    put("EY", p.get("maximum_seller_allowed_price"), "pricing.maximum_seller_allowed_price", "POLICY_V3_MAX_SALE_PLUS_20PCT")
     # USER_OVERRIDE_RULEs 2026-10-08 (decisions 1-3): Special Features = Flexible + Lightweight; Included Components left empty; warranty text as given
     put("AK", "Flexible", "USER_OVERRIDE_RULE.special_features", "USER_DECISION")
     put("AL", "Lightweight", "USER_OVERRIDE_RULE.special_features", "USER_DECISION")

@@ -34,12 +34,12 @@
       "standard_price": 25.54,
       "list_price": 0,
       "map_price": null,
-      "minimum_seller_allowed_price": 19.86,
+      "minimum_seller_allowed_price": 22.07,
       "maximum_seller_allowed_price": 27.59,
       "business_price": 20.69,
       "sale_start_date": "2026-10-08",
       "sale_end_date": "2027-05-08",
-      "pricing_policy_version": "2026-10-08-v2",
+      "pricing_policy_version": "2026-10-08-v3",
       "formula": "standard_price = sale_price / 0.9",
       "raw_result": 25.544444444444444,
       "rounding": "2_DECIMALS",
@@ -50,21 +50,22 @@
       "quantity_tiers": [
         {
           "lower_bound": 2,
-          "fixed_price": 20.28,
-          "resulting_unit_price": 20.28,
-          "discount_pct_of_business_price": 2
+          "fixed_price": 22.53,
+          "resulting_unit_price": 22.53,
+          "discount_pct_of_sale_price": 2
         },
         {
           "lower_bound": 4,
-          "fixed_price": 19.86,
-          "resulting_unit_price": 19.86,
-          "discount_pct_of_business_price": 4
+          "fixed_price": 22.07,
+          "resulting_unit_price": 22.07,
+          "discount_pct_of_sale_price": 4
         }
       ],
       "policy_rules": {
         "min_price_rule": {
-          "base": "quantity_tier",
-          "lower_bound": 4
+          "base": "sale_price",
+          "op": "discount_pct",
+          "value": 4
         },
         "max_price_rule": {
           "base": "sale_price",
@@ -88,6 +89,10 @@
           }
         ]
       },
+      "price_warnings": [
+        "QUANTITY_TIER_2_ABOVE_BUSINESS_PRICE",
+        "QUANTITY_TIER_4_ABOVE_BUSINESS_PRICE"
+      ],
       "price_input_type": "sale_price",
       "pricing_basis": "SALE",
       "business_discount_rate": 0.1,
@@ -103,7 +108,7 @@
         {
           "field": "standard_price",
           "input": 22.99,
-          "policy": "2026-10-08-v2",
+          "policy": "2026-10-08-v3",
           "formula": "standard_price = sale_price / 0.9",
           "unrounded": 25.544444444444444,
           "rounded": 25.54,
@@ -112,7 +117,7 @@
         {
           "field": "business_price",
           "input": 22.99,
-          "policy": "2026-10-08-v2",
+          "policy": "2026-10-08-v3",
           "formula": "business_price = sale_price x (1 - 0.1)",
           "unrounded": 20.691,
           "rounded": 20.69,
@@ -159,12 +164,12 @@
       "standard_price": 25.54,
       "list_price": 0,
       "map_price": null,
-      "minimum_seller_allowed_price": 19.86,
+      "minimum_seller_allowed_price": 22.07,
       "maximum_seller_allowed_price": 27.59,
       "business_price": 20.69,
       "sale_start_date": "2026-10-08",
       "sale_end_date": "2027-05-08",
-      "pricing_policy_version": "2026-10-08-v2",
+      "pricing_policy_version": "2026-10-08-v3",
       "formula": "standard_price = sale_price / 0.9",
       "raw_result": 25.544444444444444,
       "rounding": "2_DECIMALS",
@@ -175,21 +180,22 @@
       "quantity_tiers": [
         {
           "lower_bound": 2,
-          "fixed_price": 20.28,
-          "resulting_unit_price": 20.28,
-          "discount_pct_of_business_price": 2
+          "fixed_price": 22.53,
+          "resulting_unit_price": 22.53,
+          "discount_pct_of_sale_price": 2
         },
         {
           "lower_bound": 4,
-          "fixed_price": 19.86,
-          "resulting_unit_price": 19.86,
-          "discount_pct_of_business_price": 4
+          "fixed_price": 22.07,
+          "resulting_unit_price": 22.07,
+          "discount_pct_of_sale_price": 4
         }
       ],
       "policy_rules": {
         "min_price_rule": {
-          "base": "quantity_tier",
-          "lower_bound": 4
+          "base": "sale_price",
+          "op": "discount_pct",
+          "value": 4
         },
         "max_price_rule": {
           "base": "sale_price",
@@ -213,6 +219,10 @@
           }
         ]
       },
+      "price_warnings": [
+        "QUANTITY_TIER_2_ABOVE_BUSINESS_PRICE",
+        "QUANTITY_TIER_4_ABOVE_BUSINESS_PRICE"
+      ],
       "price_input_type": "sale_price",
       "pricing_basis": "SALE",
       "business_discount_rate": 0.1,
@@ -228,7 +238,7 @@
         {
           "field": "standard_price",
           "input": 22.99,
-          "policy": "2026-10-08-v2",
+          "policy": "2026-10-08-v3",
           "formula": "standard_price = sale_price / 0.9",
           "unrounded": 25.544444444444444,
           "rounded": 25.54,
@@ -237,7 +247,7 @@
         {
           "field": "business_price",
           "input": 22.99,
-          "policy": "2026-10-08-v2",
+          "policy": "2026-10-08-v3",
           "formula": "business_price = sale_price x (1 - 0.1)",
           "unrounded": 20.691,
           "rounded": 20.69,

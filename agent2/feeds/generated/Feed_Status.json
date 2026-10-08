@@ -13,10 +13,12 @@
   "included_components": "empty",
   "warranty_description": "30 days manufacturer",
   "pro_photo5": "not used",
-  "min_price": "= 4-pc tier price 19.86 (interpretation of 'Min = 4 шт')",
-  "max_price": "sale +20% = 27.59",
-  "airpods4_size": "average"
+  "min_price": "Sale -4% = 22.07 (answer \"Min. 4 штуки\"; equals the 4-pc tier price)",
+  "max_price": "Sale +20% = 27.59 (confirmed); audience ALL only, B2B min/max empty per policy v3",
+  "airpods4_size": "average",
+  "quantity_tiers": "Fixed; from Sale: 2 pcs 22.53 (-2%), 4 pcs 22.07 (-4%); warning QUANTITY_TIER_n_ABOVE_BUSINESS_PRICE (business 20.69)"
  },
- "feed_sha256": "3bc08adbf8245f0ef63c1a615eccf759a77c5c5fc357cb09db01186782835075",
- "template_sha256": "fd50ed0b704aec515949892007f17c45d060f59201ad24c753033b0b1259f925"
+ "feed_sha256": "13e486f3dc3b38b060f7c4431b583d78213cd5987f6b60c9de786159afedea16",
+ "template_sha256": "fd50ed0b704aec515949892007f17c45d060f59201ad24c753033b0b1259f925",
+ "pricing_policy_version": "2026-10-08-v3"
 }
