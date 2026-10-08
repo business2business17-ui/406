@@ -278,9 +278,9 @@ Closed on 2026-10-07: bullets indexing limit 1000 bytes treated as existing [U];
 Actions for the user:
 | # | Action |
 |---|---|
-| A | Upload the corrected Photo 5 files (`fixed_images/pro_photo5/`) to `content.uvmaster.ru` under the same names |
-| B | Rights decision on the print of q230 (the listing text is already neutral) |
-| C | **Give the tier rates** for 2, 3 and 4 units (type Percent or Fixed and a value for each), and optionally min/max allowed price guardrails. Without them the records stay `READY_WITH_WARNINGS` with a pending-tiers warning |
+| A | Closed 2026-10-08: Pro Photo 5 is not used in the feed (user decision); the corrected files are optional |
+| B | Closed 2026-10-08: q230 accepted by the user; the print is named only by general colors and shapes |
+| C | Closed 2026-10-08: tiers Fixed from Sale (2 pcs 22.53, 4 pcs 22.07), min 22.07, max 27.59 (policy v3); B2B min/max empty |
 | D | After the first sales, replace the estimated demand with the account's own Search Query Performance and Search Term Reports |
 
 Closed: variations not used (standalone listings); quantity 1, shipping template, Dangerous Goods Regulations Not Applicable and the input Sale Price 22.99 USD recorded (2026-10-07); Keyword Sales mismatch (different week, not a different metric); 1000-byte bullets limit and 2000-character description limit confirmed by the user; Item Highlights weight kept as a permanent "Amazon does not say" caveat; AirPods 4 uses the average size, shipped MFN, size numbers only in feed fields; the infographic text "DESIGNED FOR A CLOSE FIT" accepted by the user; q246 lettering renamed "Box Cat Lettering"; package size 74 x 58 x 35 mm and package weight 40 g; Photo 5 captions fixed for all 65 Pro SKUs; q230 text corrected; claim phrases removed from 130 source descriptions; case size and weight (both series); manufacturer MOBILIUS; `Key Ring` not added; Shell Type `Soft`; AirPods 4 case also fits AirPods 5; country of origin China; GTIN Exempt (approved); "keychain" wording; ANC not mentioned; PDF catalog received (images only, no names); SEO base = the two SEO xlsx files.
