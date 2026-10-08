@@ -9,5 +9,10 @@
   "standard_price": null,
   "rounding": "2_DECIMALS",
   "note": "Sale Price 22.99 USD and the sale window 2026-10-08 to 2027-05-08 are user input. On 2026-10-08 the user said: calculate all other prices per the skill. The only numeric rule in the amazon-product-intelligence skill is the reverse-discount example Sale = Standard x 0.90, so Standard = Sale / 0.90, rounded to 2 decimals (no psychological rounding). List Price, MAP, min/max allowed price, business and quantity prices are NOT derived: the skill forbids deriving them without a configured policy. Change discount_factor to change the base price.",
-  "pricing_policy_version": "SKILL_REVERSE_DISCOUNT_0.90_v1"
+  "pricing_policy_version": "SKILL_REVERSE_DISCOUNT_0.90_v1",
+  "min_price_rule": null,
+  "max_price_rule": null,
+  "business_price_rule": null,
+  "quantity_price_type": null,
+  "quantity_tiers": null
 }

@@ -118,6 +118,79 @@ def money(x):
     return float(Decimal(x).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
+def apply_rule(rule, p, base_fallback=None):
+    """rule = {"base": sale_price|standard_price|business_price, "op": discount_pct|markup_pct|fixed_amount, "value": number}"""
+    base = p.get(rule["base"])
+    if base is None:
+        base = base_fallback
+    if base is None:
+        return None
+    b, v = Decimal(str(base)), Decimal(str(rule["value"]))
+    if rule["op"] == "discount_pct":
+        r = b * (Decimal(100) - v) / Decimal(100)
+    elif rule["op"] == "markup_pct":
+        r = b * (Decimal(100) + v) / Decimal(100)
+    elif rule["op"] == "fixed_amount":
+        r = b + v
+    else:
+        raise ValueError("unknown rule op " + str(rule["op"]))
+    return money(r)
+
+
+def derive_extra_prices(p, policy):
+    """Min/max allowed price, business price and quantity tiers: only from the configured policy, never invented."""
+    if not policy:
+        return
+    sale_ref = p["sale_price"] if p["sale_price"] is not None else p["input_value"]
+    if policy.get("min_price_rule"):
+        p["minimum_seller_allowed_price"] = apply_rule(policy["min_price_rule"], p, sale_ref)
+    if policy.get("max_price_rule"):
+        p["maximum_seller_allowed_price"] = apply_rule(policy["max_price_rule"], p, sale_ref)
+    if policy.get("business_price_rule"):
+        p["business_price"] = apply_rule(policy["business_price_rule"], p, sale_ref)
+    tiers = policy.get("quantity_tiers") or []
+    if tiers:
+        p["quantity_price_type"] = policy.get("quantity_price_type", "Percent")
+        out = []
+        for t in tiers:
+            if p["quantity_price_type"] == "Percent":
+                base = p["business_price"] if p["business_price"] is not None else p["standard_price"]
+                price = money(Decimal(str(base)) * (Decimal(100) - Decimal(str(t["value"]))) / Decimal(100)) if base is not None else None
+                out.append({"lower_bound": t["lower_bound"], "discount_pct": t["value"], "resulting_unit_price": price})
+            else:
+                out.append({"lower_bound": t["lower_bound"], "fixed_price": t["value"], "resulting_unit_price": t["value"]})
+        p["quantity_tiers"] = out
+    p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers") if policy.get(k)}
+    # order checks: min <= sale <= standard <= max; tier prices strictly decreasing and not below the minimum price
+    msgs = []
+    std = p["standard_price"]
+    if p["minimum_seller_allowed_price"] is not None and p["minimum_seller_allowed_price"] > sale_ref:
+        msgs.append("minimum allowed price is above the sale price")
+    if p["maximum_seller_allowed_price"] is not None and std is not None and p["maximum_seller_allowed_price"] < std:
+        msgs.append("maximum allowed price is below the standard price")
+    if p["minimum_seller_allowed_price"] is not None and p["maximum_seller_allowed_price"] is not None \
+            and p["minimum_seller_allowed_price"] > p["maximum_seller_allowed_price"]:
+        msgs.append("minimum allowed price is above the maximum allowed price")
+    if p["business_price"] is not None and std is not None and p["business_price"] > std:
+        msgs.append("business price is above the standard price")
+    last = p["business_price"] if p["business_price"] is not None else None
+    bounds = [t["lower_bound"] for t in p.get("quantity_tiers", [])]
+    if bounds != sorted(set(bounds)):
+        msgs.append("quantity lower bounds must be ascending and unique")
+    for t in p.get("quantity_tiers", []):
+        up = t["resulting_unit_price"]
+        if up is None:
+            continue
+        if last is not None and up >= last:
+            msgs.append(f"quantity tier {t['lower_bound']} price {up} is not below the previous level {last}")
+        if p["minimum_seller_allowed_price"] is not None and up < p["minimum_seller_allowed_price"]:
+            msgs.append(f"quantity tier {t['lower_bound']} price {up} is below the minimum allowed price")
+        last = up
+    if msgs:
+        p["policy_conflicts"] = msgs
+        p["status"] = "PRICE_POLICY_CONFLICT"
+
+
 def price_block(a):
     """Pricing layer. The user gave one price and the default input field is sale_price.
     Other price fields are derived only from an explicit pricing policy; nothing is invented."""
@@ -160,6 +233,8 @@ def price_block(a):
         p["status"] = "PRICE_CONFLICT"
     elif not p["missing"] and p["status"] != "PRICE_CONFLICT":
         p["status"] = "PRICE_VALID"
+    if p["status"] == "PRICE_VALID":
+        derive_extra_prices(p, a.policy)
     return p
 
 
@@ -271,6 +346,12 @@ def attributes(key, row, content, price):
     add("sale_end_date", price["sale_end_date"], "Optional", "USER_INPUT" if price["sale_end_date"] else "NOT_PROVIDED", "HIGH" if price["sale_end_date"] else "LOW",
         "VALID" if (price["sale_end_date"] or price["sale_price"] is None) else "DATA_REQUIRED", "a sale price needs a start and an end date" if price["sale_price"] is not None else "no promotion")
     add("list_price", 0, "Conditionally Required", "TEMPLATE_RULE", "MEDIUM", "WARNING", "template: enter 0 if unable to provide; not an MSRP")
+    for nm, val in (("minimum_seller_allowed_price", price["minimum_seller_allowed_price"]), ("maximum_seller_allowed_price", price["maximum_seller_allowed_price"]),
+                    ("business_price", price["business_price"])):
+        if val is not None:
+            add(nm, val, "Optional", "CALCULATED", "HIGH", "VALID", "from the configured pricing policy " + str(price["pricing_policy_version"]))
+    for t in price.get("quantity_tiers", []):
+        add(f"quantity_tier_{t['lower_bound']}", json.dumps(t), "Optional", "CALCULATED", "HIGH", "VALID", "quantity price type " + str(price.get("quantity_price_type")))
     return A
 
 
@@ -354,6 +435,7 @@ def parse_args():
     ap.add_argument("--sale-end", default=cfg.get("sale_end_date"), help="YYYY-MM-DD")
     ap.add_argument("--pricing-policy-version", default=cfg.get("pricing_policy_version"))
     a = ap.parse_args()
+    a.policy = {k: cfg.get(k) for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers") if cfg.get(k)}
     if a.pricing_mode == "reverse_discount" and not a.discount_factor:
         ap.error("reverse_discount needs --discount-factor")
     if a.pricing_mode == "explicit_standard" and not a.standard_price:
@@ -402,6 +484,8 @@ def main():
                                and a["attribute"] not in price_attrs)
             hard = [f"VALIDATOR: {e}" for e in errs]
             hard += [("PRICE_DATA_REQUIRED: " if u.startswith(("standard_price", "sale")) else "REQUIRED_ATTRIBUTE_MISSING: ") + u for u in unresolved]
+            for m_ in price.get("policy_conflicts", []):
+                hard.append("PRICE_POLICY_CONFLICT: " + m_)
             if price["status"] == "PRICE_CONFLICT" and price["standard_price"] is not None and price["sale_price"] is not None \
                     and price["standard_price"] <= price["sale_price"]:
                 hard.append("PRICE_CONFLICT: standard price is not above the sale price")
@@ -417,6 +501,8 @@ def main():
                 status = "BLOCKED"
             elif price["status"] == "PRICE_CONFLICT":
                 status = "PRICE_CONFLICT"
+            elif price["status"] == "PRICE_POLICY_CONFLICT":
+                status = "NEEDS_REVIEW"
             elif unresolved:
                 status = "DATA_REQUIRED"
             else:
@@ -486,7 +572,10 @@ def main():
                                       content["description"], content["backend_search_terms"], content["backend_bytes"]])
             sheets["Pricing"].append([row["sku"], MARKETPLACE, CURRENCY, price["sale_price"], price["standard_price"], price["list_price"],
                                       price["map_price"], price["minimum_seller_allowed_price"], price["maximum_seller_allowed_price"],
-                                      price["business_price"], None, None, None, None, price["pricing_policy_version"], price["status"]])
+                                      price["business_price"]] + [
+                                          (f"{t['lower_bound']}+ units: " + (f"{t['discount_pct']}% off = {t['resulting_unit_price']}" if "discount_pct" in t else f"{t['fixed_price']}"))
+                                          for t in price.get("quantity_tiers", [])][:4] + [None] * (4 - len(price.get("quantity_tiers", [])[:4]))
+                                      + [price["pricing_policy_version"], price["status"]])
             for a in attrs:
                 sheets["Attributes"].append([row["sku"], a["attribute"], a["value"], a["source"], a["confidence"], a["required"], a["status"], a["note"]])
                 sheets["Audit"].append([row["sku"], a["attribute"], a["value"], a["source"], VERSIONS["product_data_version"], a["confidence"], a["status"], GENERATED_AT])
