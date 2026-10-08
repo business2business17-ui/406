@@ -46,22 +46,37 @@
       "missing": [],
       "status": "PRICE_VALID",
       "check_standard_times_factor": 22.99,
-      "quantity_tier_thresholds": [
-        2,
-        3,
-        4
+      "quantity_price_type": "Fixed",
+      "quantity_tiers": [
+        {
+          "lower_bound": 2,
+          "fixed_price": 20.28,
+          "resulting_unit_price": 20.28,
+          "discount_pct_of_business_price": 2
+        },
+        {
+          "lower_bound": 4,
+          "fixed_price": 19.86,
+          "resulting_unit_price": 19.86,
+          "discount_pct_of_business_price": 4
+        }
       ],
-      "quantity_tiers_status": "RATES_NOT_APPROVED",
       "policy_rules": {
         "business_price_rule": {
           "base": "sale_price",
           "op": "discount_pct",
           "value": 10
         },
-        "quantity_tier_thresholds": [
-          2,
-          3,
-          4
+        "quantity_price_type": "Fixed",
+        "quantity_tiers": [
+          {
+            "lower_bound": 2,
+            "discount_pct": 2
+          },
+          {
+            "lower_bound": 4,
+            "discount_pct": 4
+          }
         ]
       },
       "price_input_type": "sale_price",
@@ -155,22 +170,37 @@
       "missing": [],
       "status": "PRICE_VALID",
       "check_standard_times_factor": 22.99,
-      "quantity_tier_thresholds": [
-        2,
-        3,
-        4
+      "quantity_price_type": "Fixed",
+      "quantity_tiers": [
+        {
+          "lower_bound": 2,
+          "fixed_price": 20.28,
+          "resulting_unit_price": 20.28,
+          "discount_pct_of_business_price": 2
+        },
+        {
+          "lower_bound": 4,
+          "fixed_price": 19.86,
+          "resulting_unit_price": 19.86,
+          "discount_pct_of_business_price": 4
+        }
       ],
-      "quantity_tiers_status": "RATES_NOT_APPROVED",
       "policy_rules": {
         "business_price_rule": {
           "base": "sale_price",
           "op": "discount_pct",
           "value": 10
         },
-        "quantity_tier_thresholds": [
-          2,
-          3,
-          4
+        "quantity_price_type": "Fixed",
+        "quantity_tiers": [
+          {
+            "lower_bound": 2,
+            "discount_pct": 2
+          },
+          {
+            "lower_bound": 4,
+            "discount_pct": 4
+          }
         ]
       },
       "price_input_type": "sale_price",

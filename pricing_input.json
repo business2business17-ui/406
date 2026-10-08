@@ -8,7 +8,7 @@
   "discount_factor": 0.9,
   "standard_price": null,
   "rounding": "2_DECIMALS",
-  "note": "Policy: AMAZON_SHARED_PRICING_AND_UPDATES.md version 2026-10-08-v2 (approved by the user). Sale Price 22.99 USD is the input (price_input_type=sale_price). Standard (Your) Price = Sale / (1 - 0.10), ROUND_HALF_UP. Business Price = Sale x (1 - 0.10) from the SALE basis, never from Standard. Sale window 2026-10-08 to 2027-05-08 given by the user. Quantity tiers: the user gave thresholds 2, 3 and 4 units besides the business price; the policy says tier rates and min/max guardrails need their own approved policy, so they are not filled. Add quantity_price_type and quantity_tiers (with values) to fill them.",
+  "note": "Policy: AMAZON_SHARED_PRICING_AND_UPDATES.md version 2026-10-08-v2. Sale Price 22.99 USD (input); Standard = Sale/(1-0.10); Business = Sale x (1-0.10) from the SALE basis. Quantity tiers approved by the user on 2026-10-08: price type Fixed, 2 units = business price minus 2%, 4 units = business price minus 4%, each written as a fixed unit price (ROUND_HALF_UP to 0.01). Min/max allowed price: no approved guardrail policy, not filled.",
   "pricing_policy_version": "2026-10-08-v2",
   "min_price_rule": null,
   "max_price_rule": null,
@@ -17,11 +17,15 @@
     "op": "discount_pct",
     "value": 10
   },
-  "quantity_price_type": null,
-  "quantity_tiers": null,
-  "quantity_tier_thresholds": [
-    2,
-    3,
-    4
+  "quantity_price_type": "Fixed",
+  "quantity_tiers": [
+    {
+      "lower_bound": 2,
+      "discount_pct": 2
+    },
+    {
+      "lower_bound": 4,
+      "discount_pct": 4
+    }
   ]
 }
