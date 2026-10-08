@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.5.0"
-PREVIOUS_RECORD_VERSION = "1.4.0"
+RECORD_VERSION = "1.6.0"
+PREVIOUS_RECORD_VERSION = "1.5.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -142,8 +142,9 @@ def derive_extra_prices(p, policy):
     if not policy:
         return
     sale_ref = p["sale_price"] if p["sale_price"] is not None else p["input_value"]
-    if policy.get("min_price_rule"):
-        p["minimum_seller_allowed_price"] = apply_rule(policy["min_price_rule"], p, sale_ref)
+    min_rule = policy.get("min_price_rule")
+    if min_rule and min_rule.get("base") != "quantity_tier":
+        p["minimum_seller_allowed_price"] = apply_rule(min_rule, p, sale_ref)
     if policy.get("max_price_rule"):
         p["maximum_seller_allowed_price"] = apply_rule(policy["max_price_rule"], p, sale_ref)
     if policy.get("business_price_rule"):
@@ -168,6 +169,9 @@ def derive_extra_prices(p, policy):
                     e["discount_pct_of_business_price"] = pct
                 out.append(e)
         p["quantity_tiers"] = out
+        if min_rule and min_rule.get("base") == "quantity_tier":  # minimum = resulting unit price of the named tier
+            hit = [t for t in out if t["lower_bound"] == min_rule["lower_bound"]]
+            p["minimum_seller_allowed_price"] = hit[0]["resulting_unit_price"] if hit else None
     p["policy_rules"] = {k: policy[k] for k in ("min_price_rule", "max_price_rule", "business_price_rule", "quantity_price_type", "quantity_tiers", "quantity_tier_thresholds") if policy.get(k)}
     # order checks: min <= sale <= standard <= max; tier prices strictly decreasing and not below the minimum price
     msgs = []

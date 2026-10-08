@@ -1,0 +1,22 @@
+{
+ "status": "NOT_READY_FOR_AMAZON_UPLOAD",
+ "reason": "Template-required Included Components (BX) is empty in all 130 rows by user decision (option B: try upload and let Amazon decide)",
+ "rows": 130,
+ "blocked_fields": [
+  "BX"
+ ],
+ "open_user_actions": [
+  "rights decision for print q230"
+ ],
+ "user_decisions_2026-10-08": {
+  "special_features": "Flexible; Lightweight",
+  "included_components": "empty",
+  "warranty_description": "30 days manufacturer",
+  "pro_photo5": "not used",
+  "min_price": "= 4-pc tier price 19.86 (interpretation of 'Min = 4 шт')",
+  "max_price": "sale +20% = 27.59",
+  "airpods4_size": "average"
+ },
+ "feed_sha256": "3bc08adbf8245f0ef63c1a615eccf759a77c5c5fc357cb09db01186782835075",
+ "template_sha256": "fd50ed0b704aec515949892007f17c45d060f59201ad24c753033b0b1259f925"
+}

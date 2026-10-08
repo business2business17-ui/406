@@ -10,8 +10,15 @@
   "rounding": "2_DECIMALS",
   "note": "Policy: AMAZON_SHARED_PRICING_AND_UPDATES.md version 2026-10-08-v2. Sale Price 22.99 USD (input); Standard = Sale/(1-0.10); Business = Sale x (1-0.10) from the SALE basis. Quantity tiers approved by the user on 2026-10-08: price type Fixed, 2 units = business price minus 2%, 4 units = business price minus 4%, each written as a fixed unit price (ROUND_HALF_UP to 0.01). Min/max allowed price: no approved guardrail policy, not filled.",
   "pricing_policy_version": "2026-10-08-v2",
-  "min_price_rule": null,
-  "max_price_rule": null,
+  "min_price_rule": {
+    "base": "quantity_tier",
+    "lower_bound": 4
+  },
+  "max_price_rule": {
+    "base": "sale_price",
+    "op": "markup_pct",
+    "value": 20
+  },
   "business_price_rule": {
     "base": "sale_price",
     "op": "discount_pct",

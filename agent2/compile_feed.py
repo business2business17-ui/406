@@ -12,8 +12,8 @@ ROOT = os.path.dirname(fm.HERE)
 TPL = os.path.join(ROOT, "Feed AirPods Cases.xlsm")
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
-NUMERIC = {"AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
-SKIP_ENUM = {"C", "EV", "FE"}  # C: record_action list checked separately; EV/FE dropdown only holds the delete marker
+NUMERIC = {"EX", "EY", "FF", "FG", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
+SKIP_ENUM = {"C", "EV", "FE", "EX", "EY", "FF", "FG"}  # C: record_action list checked separately; EV/FE dropdown only holds the delete marker
 
 
 def colnum(c):
@@ -47,7 +47,10 @@ def main():
     rows, prov, issues, mut = [], [], [], []
     for i, rec in enumerate(recs):
         r = 7 + i
-        rec["photos"] = photos.get(rec["sku"], [])
+        ph = photos.get(rec["sku"], [])
+        if rec["sku"].startswith("406516"):  # user decision 2026-10-08: Pro series Photo 5 is not used
+            ph = [u for u in ph if not u.endswith("_5.jpg")]
+        rec["photos"] = ph
         v, pv = fm.build_row(rec)
         for col, val in v.items():
             if col not in SKIP_ENUM and dl.by_col.get(col) is not None and str(val) not in [str(x) for x in dl.by_col[col]]:
