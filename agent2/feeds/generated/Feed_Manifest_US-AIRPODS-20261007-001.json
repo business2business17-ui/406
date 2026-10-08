@@ -1,16 +1,16 @@
 {
- "feed_filename": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_003.xlsm",
+ "feed_filename": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_004.xlsm",
  "file_status": "READY_FOR_AMAZON_UPLOAD",
  "marketplace": "US",
  "product_type": "PORTABLE_ELECTRONIC_DEVICE_COVER",
  "batch_id": "US-AIRPODS-20261007-001",
- "part_number": 3,
+ "part_number": 4,
  "sku_count": 130,
  "operation_counts": {
   "CREATE": 130
  },
  "blocked_count": 0,
- "generated_at": "2026-10-08T09:16:06.570068Z",
+ "generated_at": "2026-10-08T12:19:26.710055Z",
  "agent2_version": "1.0.0",
  "handoff_schema_version": "1.0.0",
  "agent1_record_version": "1.8.0",
@@ -21,7 +21,7 @@
  },
  "identifier_mode": "GTIN_EXEMPT",
  "execution_mode": "HYBRID (USER_UPLOAD template + GITHUB branch claude/clever-albattani-5szkv4)",
- "feed_sha256": "7b1ec062727f0a4122303c0b19923a77aca0eb62cf848a7cf2f2987c4dbebe7a",
+ "feed_sha256": "99315d0c5810667cc4dc9929f119a94e029bc73608cf39f470d4e213c62de237",
  "agent1_jsonl_sha256": "4fd4422ddc3c5f3433e8cd99e71554ceea42a8b3fbb9f9948283a451e43411a7",
  "audit": {
   "zip_ok": true,
@@ -47,8 +47,8 @@
     27.59,
     20.28,
     19.86,
-    null,
-    null,
+    19.86,
+    27.59,
     130
    ]
   ],

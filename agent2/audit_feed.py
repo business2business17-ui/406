@@ -34,7 +34,7 @@ c.update(row_alignment_mismatch=mism, minimum_field_failures=len(minfail),
 pr = collections.Counter(tuple(Bt.cell(r, cn(L)).value for L in ("EV", "EZ", "FE", "EX", "EY", "FL", "FN", "FF", "FG")) for r in range(7, 137))
 c["price_tuples(EV,EZ,FE,EX,EY,FL,FN,FF,FG)"] = [list(k) + [v] for k, v in pr.items()]
 (ev, ez, fe, ex, ey, fl, fn, ff, fg), = [k for k in pr][:1]
-c["price_logic"] = bool(ex <= ez <= ev <= ey and fn < fl < fe <= ez and ff is None and fg is None)
+c["price_logic"] = bool(ex <= ez <= ev <= ey and fn < fl < fe <= ez and ff == ex and fg == ey and fe >= ff)
 ok = (c["zip_ok"] and c["non_template_parts_identical"] and c["macro_parts_identical_to_template"] and c["sheet_names_and_states_same"] and c["rows1_6_identical"]
       and mism == 0 and not minfail and c["sku_unique"] and c["rows_written"] == 130 and c["formula_cells_in_data"] == 0 and c["text_roundtrip_bad"] == 0
       and c["template_rule_and_enum_issues"] == 0 and c["pro_photo5_present"] == 0 and c["airpods_pro_3rd_used"] == 0 and c["price_logic"] and len(pr) == 1)

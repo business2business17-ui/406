@@ -12,7 +12,7 @@ ROOT = os.path.dirname(fm.HERE)
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
-NUMERIC = {"EX", "EY", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
+NUMERIC = {"EX", "EY", "FF", "FG", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
 SKIP_ENUM = {"C", "EV", "FE", "EX", "EY", "FF", "FG"}  # C: record_action list checked separately; EV/FE dropdown only holds the delete marker
 
 
@@ -75,7 +75,7 @@ def main():
     sheet = sheet.replace("</sheetData>", xml_rows + "</sheetData>", 1)
     sheet = re.sub(r'<dimension ref="A1:LD6"/>', f'<dimension ref="A1:LD{6 + len(rows)}"/>', sheet, 1)
     os.makedirs(OUT, exist_ok=True)
-    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_003.xlsm"
+    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_004.xlsm"
     path = os.path.join(OUT, name)
     with zipfile.ZipFile(path, "w") as zo:
         for info in z.infolist():
