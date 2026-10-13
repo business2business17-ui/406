@@ -1,0 +1,8 @@
+{
+ "status": "READY_FOR_AMAZON_UPLOAD",
+ "feed": "AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_US-AIRPODS-20261007-001_006.xlsm",
+ "feed_sha256": "1690c54f09c0a6b04e8086ff06a19a4e2ef78e6624424b40c7e30f0de1a9720b",
+ "template_sha256": "0a2eb7bfca9cd11ae3b64a73df29f4ccd61987e7abc49d745b064a2b3c454a67",
+ "rows": 65,
+ "identifier_mode": "ASIN"
+}

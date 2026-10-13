@@ -9,6 +9,8 @@ import feed_mapping as fm
 from template_rules import TemplateRules
 
 ROOT = os.path.dirname(fm.HERE)
+MODE = "partial" if "partial" in sys.argv[1:] else "create"
+PART = "006" if MODE == "partial" else "005"
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
@@ -44,6 +46,9 @@ def main():
     dl = fm.DropdownLists(TPL, cols); tr = TemplateRules(TPL)
     recs = [json.loads(l) for l in open(os.path.join(ROOT, "output/jsonl/handoff_US_batch001.jsonl"), encoding="utf-8")]
     photos = load_photos()
+    if MODE == "partial":  # user instruction 2026-10-13: existing listings -> ASIN by SKU + Edit (Partial Update)
+        amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
+        recs = [x for x in recs if x["sku"] in amap]
     rows, prov, issues, mut = [], [], [], []
     for i, rec in enumerate(recs):
         r = 7 + i
@@ -56,6 +61,10 @@ def main():
         itk = dl.by_col.get("L") or []
         assert len(itk) == 1 and "headphone-cases" in itk[0], itk
         v["L"] = itk[0]; pv["L"] = ("catalog.item_type_keyword.value", "ENUM_MAPPED")
+        if MODE == "partial":
+            v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.partial_update", "USER_DECISION_OPERATION")
+            v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
+            v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
         for col, val in v.items():
             if col not in SKIP_ENUM and dl.by_col.get(col) is not None and str(val) not in [str(x) for x in dl.by_col[col]]:
                 issues.append({"sku": rec["sku"], "row": r, "col": col, "code": "ENUM_INVALID", "value": str(val)})
@@ -75,7 +84,7 @@ def main():
     sheet = sheet.replace("</sheetData>", xml_rows + "</sheetData>", 1)
     sheet = re.sub(r'<dimension ref="A1:LD6"/>', f'<dimension ref="A1:LD{6 + len(rows)}"/>', sheet, 1)
     os.makedirs(OUT, exist_ok=True)
-    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_005.xlsm"
+    name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_{PART}.xlsm"
     path = os.path.join(OUT, name)
     with zipfile.ZipFile(path, "w") as zo:
         for info in z.infolist():
@@ -84,7 +93,7 @@ def main():
             zi = zipfile.ZipInfo(info.filename, info.date_time); zi.compress_type = info.compress_type; zi.external_attr = info.external_attr
             zo.writestr(zi, data)
     json.dump({"file": name, "rows": len(rows), "issues": issues, "provenance": prov, "mutations": mut, "template_sha256": hashlib.sha256(open(TPL, "rb").read()).hexdigest(),
-               "feed_sha256": hashlib.sha256(open(path, "rb").read()).hexdigest()}, open(os.path.join(OUT, "compile_result.json"), "w"), ensure_ascii=False)
+               "feed_sha256": hashlib.sha256(open(path, "rb").read()).hexdigest()}, open(os.path.join(OUT, f"compile_result_{PART}.json"), "w"), ensure_ascii=False)
     print(name, len(rows), "rows;", len(prov), "cells;", collections.Counter(i["code"] + ":" + i.get("col", "") for i in issues))
 
 
