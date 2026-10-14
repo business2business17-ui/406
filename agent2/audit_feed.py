@@ -5,7 +5,7 @@ warnings.simplefilter("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import feed_mapping as fm
 ROOT = os.path.dirname(HERE); G = os.path.join(HERE, "feeds", "generated") + "/"
-part = sys.argv[1]; PARTIAL = part == "006"; REST = part == "007"; N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
+part = sys.argv[1]; PARTIAL = part == "006"; REST = part == "007"; FULL = part == "008"; N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
 name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_{part}.xlsm"
 tpl = os.path.join(HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm"); f = G + name
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
@@ -19,15 +19,18 @@ c["sheet_names_and_states_same"] = A.sheetnames == B.sheetnames and [s.sheet_sta
 At, Bt = A["Template"], B["Template"]
 c["rows1_6_identical"] = all(At.cell(r, k).value == Bt.cell(r, k).value for r in range(1, 7) for k in range(1, 317))
 recs = [json.loads(l) for l in open(os.path.join(ROOT, "output/jsonl/handoff_US_batch001.jsonl"), encoding="utf-8")]
-if PARTIAL or REST:
+if PARTIAL or REST or FULL:
     amap = json.load(open(os.path.join(HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
-    recs = [x for x in recs if (x["sku"] in amap) == PARTIAL]
+    if not FULL:
+        recs = [x for x in recs if (x["sku"] in amap) == PARTIAL]
 assert len(recs) == N
 cn = openpyxl.utils.column_index_from_string
 res = json.load(open(G + f"compile_result_{part}.json"))
 mism = sum(1 for i, x in enumerate(recs) if Bt.cell(7 + i, 1).value != x["sku"] or Bt.cell(7 + i, 7).value != x["content"]["title"])
 minfail = [(r, L) for r in range(7, 7 + N) for L in ("A", "B", "C", "G", "I", "J") + (("K",) if PARTIAL else ()) if Bt.cell(r, cn(L)).value in (None, "")]
-if PARTIAL:
+if FULL:
+    minfail += [(7 + i, "full-partial") for i, x in enumerate(recs) if (Bt.cell(7 + i, cn("C")).value, Bt.cell(7 + i, cn("J")).value, Bt.cell(7 + i, cn("K")).value) != (("Edit (Partial Update)", "ASIN", amap[x["sku"]]) if x["sku"] in amap else ("Edit (Partial Update)", "GTIN Exempt", None))]
+elif PARTIAL:
     minfail += [(7 + i, "partial/ASIN") for i, x in enumerate(recs) if (Bt.cell(7 + i, cn("C")).value, Bt.cell(7 + i, cn("J")).value, Bt.cell(7 + i, cn("K")).value) != ("Edit (Partial Update)", "ASIN", amap[x["sku"]])]
 else:
     minfail += [(r, "J!=GTIN Exempt") for r in range(7, 7 + N) if Bt.cell(r, cn("J")).value != "GTIN Exempt"]
@@ -48,7 +51,7 @@ ok = (c["zip_ok"] and c["non_template_parts_identical"] and c["macro_parts_ident
 c["final_audit"] = "PASS" if ok else "FAIL"; status = "READY_FOR_AMAZON_UPLOAD" if ok else "NOT_READY_FOR_AMAZON_UPLOAD"
 print(json.dumps(c, ensure_ascii=False, indent=1))
 man = {"feed_filename": name, "file_status": status, "marketplace": "US", "product_type": "PORTABLE_ELECTRONIC_DEVICE_COVER", "batch_id": BATCH, "part_number": int(part), "sku_count": N,
-       "operation_counts": ({"PARTIAL_UPDATE": N} if PARTIAL else {"CREATE": N}), "blocked_count": 0, "generated_at": datetime.datetime.utcnow().isoformat() + "Z", "agent2_version": "1.0.0", "handoff_schema_version": "1.0.0",
+       "operation_counts": ({"PARTIAL_UPDATE": N} if (PARTIAL or FULL) else {"CREATE": N}), "blocked_count": 0, "generated_at": datetime.datetime.utcnow().isoformat() + "Z", "agent2_version": "1.0.0", "handoff_schema_version": "1.0.0",
        "agent1_record_version": recs[0]["record_version"], "pricing_policy_version": "2026-10-08-v3 with user overrides (tiers from Business Price, min = 4-pc tier price)",
        "template": {"path": os.path.relpath(tpl, ROOT), "sha256": sha(tpl)}, "identifier_mode": "UPDATE_EXISTING_ASIN" if PARTIAL else "GTIN_EXEMPT", "execution_mode": "HYBRID (USER_UPLOAD template + GITHUB branch claude/clever-albattani-5szkv4)",
        "feed_sha256": sha(f), "agent1_jsonl_sha256": sha(os.path.join(ROOT, "output/jsonl/handoff_US_batch001.jsonl")), "audit": c}

@@ -9,8 +9,8 @@ import feed_mapping as fm
 from template_rules import TemplateRules
 
 ROOT = os.path.dirname(fm.HERE)
-MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else "create")
-PART = {"partial": "006", "rest": "007", "create": "005"}[MODE]
+MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else ("full" if "full" in sys.argv[1:] else "create"))
+PART = {"partial": "006", "rest": "007", "create": "005", "full": "008"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
@@ -49,6 +49,8 @@ def main():
     if MODE == "partial":  # user instruction 2026-10-13: existing listings -> ASIN by SKU + Edit (Partial Update)
         amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
         recs = [x for x in recs if x["sku"] in amap]
+    elif MODE == "full":  # all 130 SKUs as Edit (Partial Update); ASIN where the account report has one
+        amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
     elif MODE == "rest":  # SKUs without a listing in the All Listings Report: Create, GTIN Exempt
         amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
         recs = [x for x in recs if x["sku"] not in amap]
@@ -64,6 +66,11 @@ def main():
         itk = dl.by_col.get("L") or []
         assert len(itk) == 1 and "headphone-cases" in itk[0], itk
         v["L"] = itk[0]; pv["L"] = ("catalog.item_type_keyword.value", "ENUM_MAPPED")
+        if MODE == "full":
+            v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.all_partial_update", "USER_DECISION_OPERATION")
+            if rec["sku"] in amap:
+                v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
+                v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
         if MODE == "partial":
             v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.partial_update", "USER_DECISION_OPERATION")
             v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
