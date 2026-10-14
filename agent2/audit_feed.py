@@ -5,7 +5,7 @@ warnings.simplefilter("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import feed_mapping as fm
 ROOT = os.path.dirname(HERE); G = os.path.join(HERE, "feeds", "generated") + "/"
-part = sys.argv[1]; PARTIAL = part == "006"; N = 65 if PARTIAL else 130; BATCH = "US-AIRPODS-20261007-001"
+part = sys.argv[1]; PARTIAL = part == "006"; REST = part == "007"; N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
 name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_{part}.xlsm"
 tpl = os.path.join(HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm"); f = G + name
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
@@ -19,9 +19,9 @@ c["sheet_names_and_states_same"] = A.sheetnames == B.sheetnames and [s.sheet_sta
 At, Bt = A["Template"], B["Template"]
 c["rows1_6_identical"] = all(At.cell(r, k).value == Bt.cell(r, k).value for r in range(1, 7) for k in range(1, 317))
 recs = [json.loads(l) for l in open(os.path.join(ROOT, "output/jsonl/handoff_US_batch001.jsonl"), encoding="utf-8")]
-if PARTIAL:
+if PARTIAL or REST:
     amap = json.load(open(os.path.join(HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
-    recs = [x for x in recs if x["sku"] in amap]
+    recs = [x for x in recs if (x["sku"] in amap) == PARTIAL]
 assert len(recs) == N
 cn = openpyxl.utils.column_index_from_string
 res = json.load(open(G + f"compile_result_{part}.json"))

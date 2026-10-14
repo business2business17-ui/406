@@ -9,8 +9,8 @@ import feed_mapping as fm
 from template_rules import TemplateRules
 
 ROOT = os.path.dirname(fm.HERE)
-MODE = "partial" if "partial" in sys.argv[1:] else "create"
-PART = "006" if MODE == "partial" else "005"
+MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else "create")
+PART = {"partial": "006", "rest": "007", "create": "005"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
@@ -49,6 +49,9 @@ def main():
     if MODE == "partial":  # user instruction 2026-10-13: existing listings -> ASIN by SKU + Edit (Partial Update)
         amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
         recs = [x for x in recs if x["sku"] in amap]
+    elif MODE == "rest":  # SKUs without a listing in the All Listings Report: Create, GTIN Exempt
+        amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
+        recs = [x for x in recs if x["sku"] not in amap]
     rows, prov, issues, mut = [], [], [], []
     for i, rec in enumerate(recs):
         r = 7 + i
