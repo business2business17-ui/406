@@ -17,7 +17,7 @@ if PREORDER:
     PART = {"partial": "010", "full": "009"}[MODE]
 HANDLING = "handling" in sys.argv[1:]  # user 2026-10-15: no pre-order date; order now, ship within 28 days; tax code A_GEN_TAX
 if HANDLING:
-    PART = {"partial": "013", "full": "014", "rest": "015"}[MODE]
+    PART = {"partial": "016", "full": "017", "rest": "018"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
@@ -85,6 +85,7 @@ def main():
         if HANDLING:
             v["ES"] = 28; pv["ES"] = ("user_instruction.handling_time_days", "USER_DECISION_HANDLING_TIME_28_DAYS")
             v["DT"] = "A_GEN_TAX"; pv["DT"] = ("user_instruction.product_tax_code", "USER_DECISION_TAX_CODE")
+            v["DU"] = RELEASE_DATE; pv["DU"] = ("user_instruction.merchant_release_date", "USER_DECISION_RELEASE_DATE_2026-11-12")
         if PREORDER:
             v["DU"] = RELEASE_DATE; pv["DU"] = ("user_instruction.preorder_release_date", "USER_DECISION_RELEASE_DATE_TODAY_PLUS_28_DAYS")
         for col, val in v.items():

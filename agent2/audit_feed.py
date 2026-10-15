@@ -5,7 +5,7 @@ warnings.simplefilter("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import feed_mapping as fm
 ROOT = os.path.dirname(HERE); G = os.path.join(HERE, "feeds", "generated") + "/"
-part = sys.argv[1]; PARTIAL = part in ("006", "010", "013"); REST = part in ("007", "015"); FULL = part in ("008", "009", "014"); PRE = part in ("009", "010"); HAND = part in ("013", "014", "015"); N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
+part = sys.argv[1]; PARTIAL = part in ("006", "010", "016"); REST = part in ("007", "018"); FULL = part in ("008", "009", "017"); PRE = part in ("009", "010"); HAND = part in ("016", "017", "018"); N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
 name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_{part}.xlsm"
 tpl = os.path.join(HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm"); f = G + name
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
@@ -45,7 +45,7 @@ pr = collections.Counter(tuple(Bt.cell(r, cn(L)).value for L in ("EV", "EZ", "FE
 c["price_tuples(EV,EZ,FE,EX,EY,FL,FN,FF,FG)"] = [list(k) + [v] for k, v in pr.items()]
 (ev, ez, fe, ex, ey, fl, fn, ff, fg), = [k for k in pr][:1]
 c["price_logic"] = bool(ex <= ez <= ev <= ey and fn < fl < fe <= ez and ff == ex and fg == 24.83 and ff <= fn and fe <= fg)
-c["release_date_ok"] = all((Bt.cell(7 + i, cn("DU")).value == "2026-11-12") if PRE else (Bt.cell(7 + i, cn("DU")).value is None) for i in range(N))
+c["release_date_ok"] = all((Bt.cell(7 + i, cn("DU")).value == "2026-11-12") if (PRE or HAND) else (Bt.cell(7 + i, cn("DU")).value is None) for i in range(N))
 import re as _re
 c["list_price_ok"] = all((Bt.cell(7 + i, cn("DS")).value == 25.54) if HAND else True for i in range(N))
 c["handling_and_tax_ok"] = all((Bt.cell(7 + i, cn("ES")).value == 28 and Bt.cell(7 + i, cn("DT")).value == "A_GEN_TAX") if HAND else True for i in range(N))
