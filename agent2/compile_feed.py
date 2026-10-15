@@ -9,15 +9,15 @@ import feed_mapping as fm
 from template_rules import TemplateRules
 
 ROOT = os.path.dirname(fm.HERE)
-MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else ("full" if "full" in sys.argv[1:] else "create"))
+MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else ("full" if "full" in sys.argv[1:] else ("mixed" if "mixed" in sys.argv[1:] else "create")))
 PREORDER = "preorder" in sys.argv[1:]
 RELEASE_DATE = "2026-11-12"  # user 2026-10-15: sales start in 4 weeks (today + 28 days); orderable now, ships on this date
-PART = {"partial": "006", "rest": "007", "create": "005", "full": "008"}[MODE]
+PART = {"partial": "006", "rest": "007", "create": "005", "full": "008", "mixed": "019"}[MODE]
 if PREORDER:
     PART = {"partial": "010", "full": "009"}[MODE]
-HANDLING = "handling" in sys.argv[1:]  # user 2026-10-15: no pre-order date; order now, ship within 28 days; tax code A_GEN_TAX
+HANDLING = "handling" in sys.argv[1:] or MODE == "mixed"  # user 2026-10-15: no pre-order date; order now, ship within 28 days; tax code A_GEN_TAX
 if HANDLING:
-    PART = {"partial": "016", "full": "017", "rest": "018"}[MODE]
+    PART = {"partial": "016", "full": "017", "rest": "018", "mixed": "019"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
@@ -56,7 +56,7 @@ def main():
     if MODE == "partial":  # user instruction 2026-10-13: existing listings -> ASIN by SKU + Edit (Partial Update)
         amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
         recs = [x for x in recs if x["sku"] in amap]
-    elif MODE == "full":  # all 130 SKUs as Edit (Partial Update); ASIN where the account report has one
+    elif MODE in ("full", "mixed"):  # all 130 SKUs as Edit (Partial Update); ASIN where the account report has one
         amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
     elif MODE == "rest":  # SKUs without a listing in the All Listings Report: Create, GTIN Exempt
         amap = json.load(open(os.path.join(fm.HERE, "inputs", "sku_asin_map_2026-10-12.json")))["sku_to_asin"]
@@ -76,6 +76,11 @@ def main():
         if MODE == "full":
             v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.all_partial_update", "USER_DECISION_OPERATION")
             if rec["sku"] in amap:
+                v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
+                v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
+        if MODE == "mixed":  # one file for all 130 SKUs: existing listings -> Edit (Partial Update) with ASIN; not yet in the account -> Create
+            if rec["sku"] in amap:
+                v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.partial_update_existing", "USER_DECISION_OPERATION")
                 v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
                 v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
         if MODE == "partial":
