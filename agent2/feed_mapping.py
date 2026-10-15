@@ -96,7 +96,7 @@ def build_row(rec, series_theme=None):
     put("DN", cat["item_weight_g"]["value"], "catalog.item_weight_g.value", "UNIT_PAIR")
     put("DO", "Grams", "catalog.item_weight_g.unit", "UNIT_PAIR")
     put("DQ", cat["item_condition"]["value"], "catalog.item_condition.value")
-    put("DS", p["list_price"], "pricing.list_price", "TEMPLATE_RULE_ZERO_IF_UNKNOWN")
+    put("DS", p["list_price"], "pricing.list_price", "USER_RULE_LIST_PRICE_SALE_OVER_0.90")
     put("EQ", cat["fulfillment_channel_code"]["value"], "catalog.fulfillment_channel_code.value")
     put("ER", cat["quantity"]["value"], "catalog.quantity.value")
     put("EV", p["standard_price"], "pricing.standard_price", "POLICY_2026-10-08-v3")

@@ -17,7 +17,7 @@ if PREORDER:
     PART = {"partial": "010", "full": "009"}[MODE]
 HANDLING = "handling" in sys.argv[1:]  # user 2026-10-15: no pre-order date; order now, ship within 28 days; tax code A_GEN_TAX
 if HANDLING:
-    PART = {"partial": "011", "full": "012"}[MODE]
+    PART = {"partial": "013", "full": "014"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")

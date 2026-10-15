@@ -32,7 +32,7 @@
       "currency": "USD",
       "sale_price": 22.99,
       "standard_price": 25.54,
-      "list_price": 0,
+      "list_price": 25.54,
       "map_price": null,
       "minimum_seller_allowed_price": 19.86,
       "maximum_seller_allowed_price": 27.59,
@@ -96,6 +96,11 @@
           "base": "business_price",
           "op": "markup_pct",
           "value": 20
+        },
+        "list_price_rule": {
+          "base": "sale_price",
+          "op": "reverse_discount",
+          "value": 10
         }
       },
       "price_input_type": "sale_price",
@@ -167,7 +172,7 @@
       "currency": "USD",
       "sale_price": 22.99,
       "standard_price": 25.54,
-      "list_price": 0,
+      "list_price": 25.54,
       "map_price": null,
       "minimum_seller_allowed_price": 19.86,
       "maximum_seller_allowed_price": 27.59,
@@ -231,6 +236,11 @@
           "base": "business_price",
           "op": "markup_pct",
           "value": 20
+        },
+        "list_price_rule": {
+          "base": "sale_price",
+          "op": "reverse_discount",
+          "value": 10
         }
       },
       "price_input_type": "sale_price",
