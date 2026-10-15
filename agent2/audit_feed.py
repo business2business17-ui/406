@@ -5,7 +5,7 @@ warnings.simplefilter("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import feed_mapping as fm
 ROOT = os.path.dirname(HERE); G = os.path.join(HERE, "feeds", "generated") + "/"
-part = sys.argv[1]; PARTIAL = part in ("006", "010", "016"); REST = part in ("007", "018"); FULL = part in ("008", "009", "017"); MIXED = part == "020"; PRE = part in ("009", "010"); HAND = part in ("016", "017", "018", "020"); N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
+part = sys.argv[1]; PARTIAL = part in ("006", "010", "016"); REST = part in ("007", "018"); FULL = part in ("008", "009", "017"); MIXED = part == "021"; PRE = part in ("009", "010"); HAND = part in ("016", "017", "018", "021"); N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
 name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_{part}.xlsm"
 tpl = os.path.join(HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm"); f = G + name
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
@@ -51,6 +51,7 @@ c["release_date_ok"] = all((Bt.cell(7 + i, cn("DU")).value == "2026-11-12") if (
 import re as _re
 c["list_price_ok"] = all((Bt.cell(7 + i, cn("DS")).value == 25.54) if HAND else True for i in range(N))
 c["create_rows_complete"] = all(all(Bt.cell(7 + i, cn(L)).value not in (None, "") for L in ("AW", "CO", "GQ", "GR")) for i, x in enumerate(recs) if (MIXED or REST) and x["sku"] not in amap) if (MIXED or REST) else True
+c["model_part_eq_sku"] = all(Bt.cell(7 + i, cn("P")).value == Bt.cell(7 + i, 1).value == Bt.cell(7 + i, cn("BA")).value for i in range(N)) if MIXED else True
 c["handling_and_tax_ok"] = all((Bt.cell(7 + i, cn("ES")).value == 28 and Bt.cell(7 + i, cn("DT")).value == "A_GEN_TAX") if HAND else True for i in range(N))
 txt = lambda i: [str(Bt.cell(7 + i, cn(L)).value or "") for L in ("G", "H", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AY", "BB", "I", "Q")]
 c["title_max_len"] = max(len(str(Bt.cell(7 + i, cn("G")).value)) for i in range(N)); c["highlights_max_len"] = max(len(str(Bt.cell(7 + i, cn("H")).value)) for i in range(N))
@@ -59,7 +60,7 @@ c["foreign_brand_hits"] = sorted({m.group(1).lower() for i in range(N) for t in 
 c["airpods_mentions_kept_for_compatibility"] = sum(1 for i in range(N) if "airpods" in " ".join(txt(i)).lower())
 ok = (c["zip_ok"] and c["non_template_parts_identical"] and c["macro_parts_identical_to_template"] and c["sheet_names_and_states_same"] and c["rows1_6_identical"]
       and mism == 0 and not minfail and c["sku_unique"] and c["rows_written"] == N and c["formula_cells_in_data"] == 0 and c["text_roundtrip_bad"] == 0
-      and c["template_rule_and_enum_issues"] == 0 and c["pro_photo5_present"] == 0 and c["airpods_pro_3rd_used"] == 0 and c["price_logic"] and c["release_date_ok"] and c["handling_and_tax_ok"] and c["create_rows_complete"] and c["list_price_ok"] and c["title_max_len"] <= 75 and c["highlights_max_len"] <= 125 and not c["foreign_brand_hits"] and len(pr) == 1)
+      and c["template_rule_and_enum_issues"] == 0 and c["pro_photo5_present"] == 0 and c["airpods_pro_3rd_used"] == 0 and c["price_logic"] and c["release_date_ok"] and c["handling_and_tax_ok"] and c["create_rows_complete"] and c["model_part_eq_sku"] and c["list_price_ok"] and c["title_max_len"] <= 75 and c["highlights_max_len"] <= 125 and not c["foreign_brand_hits"] and len(pr) == 1)
 c["final_audit"] = "PASS" if ok else "FAIL"; status = "READY_FOR_AMAZON_UPLOAD" if ok else "NOT_READY_FOR_AMAZON_UPLOAD"
 print(json.dumps(c, ensure_ascii=False, indent=1))
 man = {"feed_filename": name, "file_status": status, "marketplace": "US", "product_type": "PORTABLE_ELECTRONIC_DEVICE_COVER", "batch_id": BATCH, "part_number": int(part), "sku_count": N,
