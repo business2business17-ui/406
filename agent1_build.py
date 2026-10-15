@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.9.0"
-PREVIOUS_RECORD_VERSION = "1.8.0"
+RECORD_VERSION = "1.10.0"
+PREVIOUS_RECORD_VERSION = "1.9.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -57,7 +57,7 @@ SERIES = {
         "compat_models": ["Apple AirPods Pro", "Apple AirPods Pro (2nd generation)"],
         "compat_generations": ["1st generation", "2nd generation"],
         "validator_series": "pro",
-        "bullet1": ("AirPods Pro 2 case cover: Fits Apple AirPods Pro 2nd generation and AirPods Pro 1st generation "
+        "bullet1": ("AirPods Pro 2 case cover: Fits AirPods Pro 2nd generation and AirPods Pro 1st generation "
                     "charging cases; the same AirPods Pro case cover fits both generations; earbuds and charging case not included"),
         "fit_phrase": "the AirPods Pro charging case",
         "desc_open": ("MOBILIUS AirPods Pro 2 case cover for AirPods Pro 2nd generation and AirPods Pro 1st generation. "
@@ -71,7 +71,7 @@ SERIES = {
         "compat_models": ["Apple AirPods (4th generation)", "Apple AirPods (5th generation)"],
         "compat_generations": ["4th generation", "5th generation"],
         "validator_series": "airpods4",
-        "bullet1": ("AirPods 5 case cover: Fits Apple AirPods 5th generation and AirPods 4th generation charging cases; "
+        "bullet1": ("AirPods 5 case cover: Fits AirPods 5th generation and AirPods 4th generation charging cases; "
                     "the same AirPods 4 case cover fits both generations; earbuds and charging case not included"),
         "fit_phrase": "the AirPods 4 and AirPods 5 charging cases",
         "desc_open": ("MOBILIUS AirPods 5 case cover for AirPods 5th generation and AirPods 4th generation. "

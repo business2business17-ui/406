@@ -15,10 +15,13 @@ RELEASE_DATE = "2026-11-12"  # user 2026-10-15: sales start in 4 weeks (today + 
 PART = {"partial": "006", "rest": "007", "create": "005", "full": "008"}[MODE]
 if PREORDER:
     PART = {"partial": "010", "full": "009"}[MODE]
+HANDLING = "handling" in sys.argv[1:]  # user 2026-10-15: no pre-order date; order now, ship within 28 days; tax code A_GEN_TAX
+if HANDLING:
+    PART = {"partial": "011", "full": "012"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
-NUMERIC = {"EX", "EY", "FF", "FG", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
+NUMERIC = {"ES", "EX", "EY", "FF", "FG", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
 SKIP_ENUM = {"C", "EV", "FE", "EX", "EY", "FF", "FG"}  # C: record_action list checked separately; EV/FE dropdown only holds the delete marker
 
 
@@ -79,6 +82,9 @@ def main():
             v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.partial_update", "USER_DECISION_OPERATION")
             v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
             v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
+        if HANDLING:
+            v["ES"] = 28; pv["ES"] = ("user_instruction.handling_time_days", "USER_DECISION_HANDLING_TIME_28_DAYS")
+            v["DT"] = "A_GEN_TAX"; pv["DT"] = ("user_instruction.product_tax_code", "USER_DECISION_TAX_CODE")
         if PREORDER:
             v["DU"] = RELEASE_DATE; pv["DU"] = ("user_instruction.preorder_release_date", "USER_DECISION_RELEASE_DATE_TODAY_PLUS_28_DAYS")
         for col, val in v.items():
