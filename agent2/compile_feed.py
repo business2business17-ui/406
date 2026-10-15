@@ -12,16 +12,16 @@ ROOT = os.path.dirname(fm.HERE)
 MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else ("full" if "full" in sys.argv[1:] else ("mixed" if "mixed" in sys.argv[1:] else "create")))
 PREORDER = "preorder" in sys.argv[1:]
 RELEASE_DATE = "2026-11-12"  # user 2026-10-15: sales start in 4 weeks (today + 28 days); orderable now, ships on this date
-PART = {"partial": "006", "rest": "007", "create": "005", "full": "008", "mixed": "019"}[MODE]
+PART = {"partial": "006", "rest": "007", "create": "005", "full": "008", "mixed": "020"}[MODE]
 if PREORDER:
     PART = {"partial": "010", "full": "009"}[MODE]
 HANDLING = "handling" in sys.argv[1:] or MODE == "mixed"  # user 2026-10-15: no pre-order date; order now, ship within 28 days; tax code A_GEN_TAX
 if HANDLING:
-    PART = {"partial": "016", "full": "017", "rest": "018", "mixed": "019"}[MODE]
+    PART = {"partial": "016", "full": "017", "rest": "018", "mixed": "020"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
-NUMERIC = {"ES", "EX", "EY", "FF", "FG", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
+NUMERIC = {"AW", "CO", "ES", "EX", "EY", "FF", "FG", "AV", "DN", "DS", "ER", "EV", "EZ", "FE", "FK", "FL", "FM", "FN", "FV", "FX", "FZ", "GB", "GD", "GF", "GH"}
 SKIP_ENUM = {"C", "EV", "FE", "EX", "EY", "FF", "FG"}  # C: record_action list checked separately; EV/FE dropdown only holds the delete marker
 
 
@@ -78,6 +78,10 @@ def main():
             if rec["sku"] in amap:
                 v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
                 v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
+        if MODE in ("mixed", "rest") and rec["sku"] not in amap:  # new product (Create): extra attributes whose values are verified facts (one case + one keychain, plain TPU case without electronics)
+            for col, val, why in (("AW", 1, "package_contents: one case and one carabiner keychain"), ("CO", 1, "single pack (template definition: enter 1)"),
+                                  ("GQ", "No", "TPU case without electronics: no batteries required"), ("GR", "No", "no batteries included in the package")):
+                v[col] = val; pv[col] = ("catalog.FACTS." + why, "VERIFIED_FACT_CREATE_COMPLETENESS")
         if MODE == "mixed":  # one file for all 130 SKUs: existing listings -> Edit (Partial Update) with ASIN; not yet in the account -> Create
             if rec["sku"] in amap:
                 v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.partial_update_existing", "USER_DECISION_OPERATION")
