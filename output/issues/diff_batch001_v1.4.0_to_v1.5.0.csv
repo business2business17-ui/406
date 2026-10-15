@@ -1,0 +1,9 @@
+field,old,new,records_changed
+catalog.quantity_tier_2,null,"[""{\""lower_bound\"": 2, \""fixed_price\"": 20.28, \""resulting_unit_price\"": 20.28, \""discount",130
+catalog.quantity_tier_4,null,"[""{\""lower_bound\"": 4, \""fixed_price\"": 19.86, \""resulting_unit_price\"": 19.86, \""discount",130
+catalog.quantity_tier_thresholds,"[""2, 3, 4 units"", ""WARNING""]",null,130
+pricing.policy_rules,"{""business_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 10}, ""quanti","{""business_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 10}, ""quanti",130
+pricing.quantity_price_type,null,"""Fixed""",130
+pricing.quantity_tier_thresholds,"[2, 3, 4]",null,130
+pricing.quantity_tiers,null,"[{""lower_bound"": 2, ""fixed_price"": 20.28, ""resulting_unit_price"": 20.28, ""discount_pct_of_",130
+pricing.quantity_tiers_status,"""RATES_NOT_APPROVED""",null,130

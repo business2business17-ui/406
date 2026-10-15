@@ -1,0 +1,7 @@
+field,old,new,records_changed
+catalog.maximum_seller_allowed_price,null,"[27.59, ""VALID""]",130
+catalog.minimum_seller_allowed_price,null,"[19.86, ""VALID""]",130
+pricing.maximum_seller_allowed_price,null,27.59,130
+pricing.minimum_seller_allowed_price,null,19.86,130
+pricing.policy_rules,"{""business_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 10}, ""quanti","{""min_price_rule"": {""base"": ""quantity_tier"", ""lower_bound"": 4}, ""max_price_rule"": {""base"":",130
+pricing.pricing_calculations,"[{""field"": ""sale_price"", ""formula"": ""preserved unchanged"", ""input"": 22.99, ""rounded"": 22.9","[{""field"": ""sale_price"", ""input"": 22.99, ""formula"": ""preserved unchanged"", ""rounded"": 22.9",130

@@ -1,0 +1,14 @@
+field,old,new,records_changed
+catalog.business_price,null,"[20.69, ""VALID""]",130
+catalog.quantity_tier_thresholds,null,"[""2, 3, 4 units"", ""WARNING""]",130
+pricing.business_discount_rate,null,0.1,130
+pricing.business_price,null,20.69,130
+pricing.business_price_basis,null,"""SALE""",130
+pricing.business_price_status,null,"""CALCULATED""",130
+pricing.policy_rules,null,"{""business_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 10}, ""quanti",130
+pricing.price_input_type,null,"""sale_price""",130
+pricing.pricing_basis,null,"""SALE""",130
+pricing.pricing_calculations,null,"[{""field"": ""sale_price"", ""input"": 22.99, ""formula"": ""preserved unchanged"", ""rounded"": 22.9",130
+pricing.pricing_policy_version,"""SKILL_REVERSE_DISCOUNT_0.90_v1""","""2026-10-08-v2""",130
+pricing.quantity_tier_thresholds,null,"[2, 3, 4]",130
+pricing.quantity_tiers_status,null,"""RATES_NOT_APPROVED""",130

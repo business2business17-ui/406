@@ -1,0 +1,50 @@
+{
+  "input_field": "sale_price",
+  "input_value": "22.99",
+  "currency": "USD",
+  "sale_start_date": "2026-10-08",
+  "sale_end_date": "2027-05-08",
+  "pricing_mode": "reverse_discount",
+  "discount_factor": 0.9,
+  "standard_price": null,
+  "rounding": "2_DECIMALS",
+  "note": "Policy v3 with explicit user overrides (2026-10-08): quantity tiers (B2B, Fixed) are taken from the Business Price, not the Sale Price, because tier prices must be below the Business Price: 2 pcs = Business -2%, 4 pcs = Business -4%. Min allowed price = price of the 4-pc tier (answer 'Min. 4 штуки'); max = Sale +20% (confirmed); min/max for audience ALL only, B2B min/max empty. B2B guardrails (user, option A): min = 19.86 (4-pc tier price), max = Business +20% = 24.83. List Price (user, 2026-10-15, option A, X=10%): Sale / (1 - 0.10) = 25.54.",
+  "pricing_policy_version": "2026-10-08-v3",
+  "min_price_rule": {
+    "base": "quantity_tier",
+    "lower_bound": 4
+  },
+  "max_price_rule": {
+    "base": "sale_price",
+    "op": "markup_pct",
+    "value": 20
+  },
+  "business_price_rule": {
+    "base": "sale_price",
+    "op": "discount_pct",
+    "value": 10
+  },
+  "quantity_price_type": "Fixed",
+  "quantity_tiers": [
+    {
+      "lower_bound": 2,
+      "discount_pct": 2
+    },
+    {
+      "lower_bound": 4,
+      "discount_pct": 4
+    }
+  ],
+  "quantity_tier_base": "business_price",
+  "b2b_min_price_rule": "same_as_min",
+  "b2b_max_price_rule": {
+    "base": "business_price",
+    "op": "markup_pct",
+    "value": 20
+  },
+  "list_price_rule": {
+    "base": "sale_price",
+    "op": "reverse_discount",
+    "value": 10
+  }
+}

@@ -1,0 +1,282 @@
+{
+  "pro": {
+    "variation": "NOT_USED",
+    "compatibility": [
+      "Apple AirPods Pro",
+      "Apple AirPods Pro (2nd generation)"
+    ],
+    "facts": {
+      "brand": "MOBILIUS",
+      "manufacturer": "MOBILIUS",
+      "material": "Thermoplastic Polyurethane",
+      "coating": "soft-touch coating",
+      "shell_type": "Soft",
+      "average_thickness_mm": 2.5,
+      "country_of_origin": "China",
+      "item_length_mm": 64,
+      "item_width_mm": 48,
+      "item_height_mm": 25,
+      "item_weight_g": 30,
+      "package_length_mm": 74,
+      "package_width_mm": 58,
+      "package_height_mm": 35,
+      "package_weight_g": 40,
+      "package_contents": "one case and one carabiner keychain",
+      "construction": "two parts, top and base",
+      "number_of_items": 1,
+      "fulfillment": "MFN (merchant-fulfilled)"
+    },
+    "pricing": {
+      "input_field": "sale_price",
+      "input_value": 22.99,
+      "currency": "USD",
+      "sale_price": 22.99,
+      "standard_price": 25.54,
+      "list_price": 25.54,
+      "map_price": null,
+      "minimum_seller_allowed_price": 19.86,
+      "maximum_seller_allowed_price": 27.59,
+      "business_price": 20.69,
+      "sale_start_date": "2026-10-08",
+      "sale_end_date": "2027-05-08",
+      "pricing_policy_version": "2026-10-08-v3",
+      "formula": "standard_price = sale_price / 0.9",
+      "raw_result": 25.544444444444444,
+      "rounding": "2_DECIMALS",
+      "missing": [],
+      "status": "PRICE_VALID",
+      "check_standard_times_factor": 22.99,
+      "quantity_price_type": "Fixed",
+      "quantity_tier_base": "business_price",
+      "quantity_tiers": [
+        {
+          "lower_bound": 2,
+          "fixed_price": 20.28,
+          "resulting_unit_price": 20.28,
+          "discount_pct_of_business_price": 2
+        },
+        {
+          "lower_bound": 4,
+          "fixed_price": 19.86,
+          "resulting_unit_price": 19.86,
+          "discount_pct_of_business_price": 4
+        }
+      ],
+      "b2b_minimum_seller_allowed_price": 19.86,
+      "b2b_maximum_seller_allowed_price": 24.83,
+      "policy_rules": {
+        "min_price_rule": {
+          "base": "quantity_tier",
+          "lower_bound": 4
+        },
+        "max_price_rule": {
+          "base": "sale_price",
+          "op": "markup_pct",
+          "value": 20
+        },
+        "business_price_rule": {
+          "base": "sale_price",
+          "op": "discount_pct",
+          "value": 10
+        },
+        "quantity_price_type": "Fixed",
+        "quantity_tiers": [
+          {
+            "lower_bound": 2,
+            "discount_pct": 2
+          },
+          {
+            "lower_bound": 4,
+            "discount_pct": 4
+          }
+        ],
+        "quantity_tier_base": "business_price",
+        "b2b_min_price_rule": "same_as_min",
+        "b2b_max_price_rule": {
+          "base": "business_price",
+          "op": "markup_pct",
+          "value": 20
+        },
+        "list_price_rule": {
+          "base": "sale_price",
+          "op": "reverse_discount",
+          "value": 10
+        }
+      },
+      "price_input_type": "sale_price",
+      "pricing_basis": "SALE",
+      "business_discount_rate": 0.1,
+      "business_price_basis": "SALE",
+      "business_price_status": "CALCULATED",
+      "pricing_calculations": [
+        {
+          "field": "sale_price",
+          "input": 22.99,
+          "formula": "preserved unchanged",
+          "rounded": 22.99
+        },
+        {
+          "field": "standard_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v3",
+          "formula": "standard_price = sale_price / 0.9",
+          "unrounded": 25.544444444444444,
+          "rounded": 25.54,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        },
+        {
+          "field": "business_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v3",
+          "formula": "business_price = sale_price x (1 - 0.1)",
+          "unrounded": 20.691,
+          "rounded": 20.69,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        }
+      ]
+    },
+    "quantity": 1,
+    "shipping_template": "Migrated Template",
+    "children": 65
+  },
+  "airpods4": {
+    "variation": "NOT_USED",
+    "compatibility": [
+      "Apple AirPods (4th generation)",
+      "Apple AirPods (5th generation)"
+    ],
+    "facts": {
+      "brand": "MOBILIUS",
+      "manufacturer": "MOBILIUS",
+      "material": "Thermoplastic Polyurethane",
+      "coating": "soft-touch coating",
+      "shell_type": "Soft",
+      "average_thickness_mm": 2.5,
+      "country_of_origin": "China",
+      "item_length_mm": 64,
+      "item_width_mm": 48,
+      "item_height_mm": 25,
+      "item_weight_g": 30,
+      "package_length_mm": 74,
+      "package_width_mm": 58,
+      "package_height_mm": 35,
+      "package_weight_g": 40,
+      "package_contents": "one case and one carabiner keychain",
+      "construction": "two parts, top and base",
+      "number_of_items": 1,
+      "fulfillment": "MFN (merchant-fulfilled)"
+    },
+    "pricing": {
+      "input_field": "sale_price",
+      "input_value": 22.99,
+      "currency": "USD",
+      "sale_price": 22.99,
+      "standard_price": 25.54,
+      "list_price": 25.54,
+      "map_price": null,
+      "minimum_seller_allowed_price": 19.86,
+      "maximum_seller_allowed_price": 27.59,
+      "business_price": 20.69,
+      "sale_start_date": "2026-10-08",
+      "sale_end_date": "2027-05-08",
+      "pricing_policy_version": "2026-10-08-v3",
+      "formula": "standard_price = sale_price / 0.9",
+      "raw_result": 25.544444444444444,
+      "rounding": "2_DECIMALS",
+      "missing": [],
+      "status": "PRICE_VALID",
+      "check_standard_times_factor": 22.99,
+      "quantity_price_type": "Fixed",
+      "quantity_tier_base": "business_price",
+      "quantity_tiers": [
+        {
+          "lower_bound": 2,
+          "fixed_price": 20.28,
+          "resulting_unit_price": 20.28,
+          "discount_pct_of_business_price": 2
+        },
+        {
+          "lower_bound": 4,
+          "fixed_price": 19.86,
+          "resulting_unit_price": 19.86,
+          "discount_pct_of_business_price": 4
+        }
+      ],
+      "b2b_minimum_seller_allowed_price": 19.86,
+      "b2b_maximum_seller_allowed_price": 24.83,
+      "policy_rules": {
+        "min_price_rule": {
+          "base": "quantity_tier",
+          "lower_bound": 4
+        },
+        "max_price_rule": {
+          "base": "sale_price",
+          "op": "markup_pct",
+          "value": 20
+        },
+        "business_price_rule": {
+          "base": "sale_price",
+          "op": "discount_pct",
+          "value": 10
+        },
+        "quantity_price_type": "Fixed",
+        "quantity_tiers": [
+          {
+            "lower_bound": 2,
+            "discount_pct": 2
+          },
+          {
+            "lower_bound": 4,
+            "discount_pct": 4
+          }
+        ],
+        "quantity_tier_base": "business_price",
+        "b2b_min_price_rule": "same_as_min",
+        "b2b_max_price_rule": {
+          "base": "business_price",
+          "op": "markup_pct",
+          "value": 20
+        },
+        "list_price_rule": {
+          "base": "sale_price",
+          "op": "reverse_discount",
+          "value": 10
+        }
+      },
+      "price_input_type": "sale_price",
+      "pricing_basis": "SALE",
+      "business_discount_rate": 0.1,
+      "business_price_basis": "SALE",
+      "business_price_status": "CALCULATED",
+      "pricing_calculations": [
+        {
+          "field": "sale_price",
+          "input": 22.99,
+          "formula": "preserved unchanged",
+          "rounded": 22.99
+        },
+        {
+          "field": "standard_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v3",
+          "formula": "standard_price = sale_price / 0.9",
+          "unrounded": 25.544444444444444,
+          "rounded": 25.54,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        },
+        {
+          "field": "business_price",
+          "input": 22.99,
+          "policy": "2026-10-08-v3",
+          "formula": "business_price = sale_price x (1 - 0.1)",
+          "unrounded": 20.691,
+          "rounded": 20.69,
+          "rounding": "ROUND_HALF_UP to 0.01"
+        }
+      ]
+    },
+    "quantity": 1,
+    "shipping_template": "Migrated Template",
+    "children": 65
+  }
+}

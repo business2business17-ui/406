@@ -1,0 +1,10 @@
+field,old,new,records_changed
+catalog.minimum_seller_allowed_price,"[19.86, ""VALID""]","[22.07, ""VALID""]",130
+catalog.quantity_tier_2,"[""{\""lower_bound\"": 2, \""fixed_price\"": 20.28, \""resulting_unit_price\"": 20.28, \""discount","[""{\""lower_bound\"": 2, \""fixed_price\"": 22.53, \""resulting_unit_price\"": 22.53, \""discount",130
+catalog.quantity_tier_4,"[""{\""lower_bound\"": 4, \""fixed_price\"": 19.86, \""resulting_unit_price\"": 19.86, \""discount","[""{\""lower_bound\"": 4, \""fixed_price\"": 22.07, \""resulting_unit_price\"": 22.07, \""discount",130
+pricing.minimum_seller_allowed_price,19.86,22.07,130
+pricing.policy_rules,"{""business_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 10}, ""max_pr","{""min_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 4}, ""max_price_ru",130
+pricing.price_warnings,null,"[""QUANTITY_TIER_2_ABOVE_BUSINESS_PRICE"", ""QUANTITY_TIER_4_ABOVE_BUSINESS_PRICE""]",130
+pricing.pricing_calculations,"[{""field"": ""sale_price"", ""formula"": ""preserved unchanged"", ""input"": 22.99, ""rounded"": 22.9","[{""field"": ""sale_price"", ""input"": 22.99, ""formula"": ""preserved unchanged"", ""rounded"": 22.9",130
+pricing.pricing_policy_version,"""2026-10-08-v2""","""2026-10-08-v3""",130
+pricing.quantity_tiers,"[{""discount_pct_of_business_price"": 2, ""fixed_price"": 20.28, ""lower_bound"": 2, ""resulting_","[{""lower_bound"": 2, ""fixed_price"": 22.53, ""resulting_unit_price"": 22.53, ""discount_pct_of_",130

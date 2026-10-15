@@ -1,0 +1,4 @@
+field,old,new,records_changed
+pricing.b2b_maximum_seller_allowed_price,null,24.83,130
+pricing.b2b_minimum_seller_allowed_price,null,19.86,130
+pricing.policy_rules,"{""business_price_rule"": {""base"": ""sale_price"", ""op"": ""discount_pct"", ""value"": 10}, ""max_pr","{""min_price_rule"": {""base"": ""quantity_tier"", ""lower_bound"": 4}, ""max_price_rule"": {""base"":",130
