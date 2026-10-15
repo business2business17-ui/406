@@ -10,7 +10,11 @@ from template_rules import TemplateRules
 
 ROOT = os.path.dirname(fm.HERE)
 MODE = "partial" if "partial" in sys.argv[1:] else ("rest" if "rest" in sys.argv[1:] else ("full" if "full" in sys.argv[1:] else "create"))
+PREORDER = "preorder" in sys.argv[1:]
+RELEASE_DATE = "2026-11-12"  # user 2026-10-15: sales start in 4 weeks (today + 28 days); orderable now, ships on this date
 PART = {"partial": "006", "rest": "007", "create": "005", "full": "008"}[MODE]
+if PREORDER:
+    PART = {"partial": "010", "full": "009"}[MODE]
 TPL = os.path.join(fm.HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm")  # template uploaded by the user 2026-10-08
 BATCH = "US-AIRPODS-20261007-001"
 OUT = os.path.join(fm.HERE, "feeds", "generated")
@@ -75,6 +79,8 @@ def main():
             v["C"] = "Edit (Partial Update)"; pv["C"] = ("user_instruction.partial_update", "USER_DECISION_OPERATION")
             v["J"] = "ASIN"; pv["J"] = ("All_Listings_Report.asin1", "ENUM_MAPPED_IDENTIFIER_MODE_UPDATE_EXISTING_ASIN")
             v["K"] = amap[rec["sku"]]; pv["K"] = ("All_Listings_Report.asin1 (by seller-sku)", "LOOKUP_BY_SKU")
+        if PREORDER:
+            v["DU"] = RELEASE_DATE; pv["DU"] = ("user_instruction.preorder_release_date", "USER_DECISION_RELEASE_DATE_TODAY_PLUS_28_DAYS")
         for col, val in v.items():
             if col not in SKIP_ENUM and dl.by_col.get(col) is not None and str(val) not in [str(x) for x in dl.by_col[col]]:
                 issues.append({"sku": rec["sku"], "row": r, "col": col, "code": "ENUM_INVALID", "value": str(val)})
