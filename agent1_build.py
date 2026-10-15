@@ -32,8 +32,8 @@ LANGUAGE = "en_US"
 CURRENCY = "USD"
 BATCH_ID = "US-AIRPODS-20261007-001"
 GENERATED_AT = "2026-10-07T00:00:00Z"
-RECORD_VERSION = "1.11.0"
-PREVIOUS_RECORD_VERSION = "1.10.0"
+RECORD_VERSION = "1.12.0"
+PREVIOUS_RECORD_VERSION = "1.11.0"
 SALE_PRICE_INPUT = Decimal("22.99")  # user input 2026-10-07: Sale Price 22.99 USD
 QUANTITY = 1
 SHIPPING_TEMPLATE = "Migrated Template"  # user typed "Mirgrated template"; the only valid value of the template
@@ -62,7 +62,7 @@ SERIES = {
         "fit_phrase": "the AirPods Pro charging case",
         "desc_open": ("MOBILIUS AirPods Pro 2 case cover for AirPods Pro 2nd generation and AirPods Pro 1st generation. "
                       "The same case fits both generations."),
-        "backend": "air pod pods airpod airpodpro podspro procase podspro2",
+        "backend": "air pod pods airpod airpodpro podspro podspro2",
     },
     "airpods4": {
         "file": "Airpods4_406517.xlsx",

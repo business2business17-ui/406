@@ -5,7 +5,7 @@ warnings.simplefilter("ignore")
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import feed_mapping as fm
 ROOT = os.path.dirname(HERE); G = os.path.join(HERE, "feeds", "generated") + "/"
-part = sys.argv[1]; PARTIAL = part in ("006", "010", "013"); REST = part == "007"; FULL = part in ("008", "009", "014"); PRE = part in ("009", "010"); HAND = part in ("013", "014"); N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
+part = sys.argv[1]; PARTIAL = part in ("006", "010", "013"); REST = part in ("007", "015"); FULL = part in ("008", "009", "014"); PRE = part in ("009", "010"); HAND = part in ("013", "014", "015"); N = 65 if (PARTIAL or REST) else 130; BATCH = "US-AIRPODS-20261007-001"
 name = f"AmazonFeed_US_PORTABLE_ELECTRONIC_DEVICE_COVER_{BATCH}_{part}.xlsm"
 tpl = os.path.join(HERE, "templates", "raw", "PORTABLE_ELECTRONIC_DEVICE_COVER_2026-10-08.xlsm"); f = G + name
 sha = lambda p: hashlib.sha256(open(p, "rb").read()).hexdigest()
